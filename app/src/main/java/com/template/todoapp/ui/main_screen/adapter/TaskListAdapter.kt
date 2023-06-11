@@ -2,11 +2,10 @@ package com.template.todoapp.ui.main_screen.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Paint
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StrikethroughSpan
-import android.text.style.TextAppearanceSpan
+import com.template.todoapp.databinding.ItemTaskListBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.template.todoapp.R
-import com.template.todoapp.databinding.ItemTaskListBinding
 import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
 import java.text.SimpleDateFormat
@@ -24,11 +22,10 @@ import java.util.*
 class TaskListAdapter(
     private val onChooseClickListener: ((TodoItem) -> Unit),
     private val onInfoClickListener: ((TodoItem) -> Unit)
-) : ListAdapter<TodoItem, TaskListAdapter.ViewHolder>(TaskDiffUtil()) {
-    class ViewHolder(val binding: ItemTaskListBinding) :
+) : ListAdapter<TodoItem, TaskListAdapter.TaskViewHolder>(TaskDiffUtil()) {
+    inner class TaskViewHolder(val binding: ItemTaskListBinding, private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(todoItem: TodoItem, context: Context) {
-
+        fun bind(todoItem: TodoItem) {
             with(binding) {
                 titleTask.text = todoItem.text
                 dataTask.text = todoItem.deadline.toFormatDate()
@@ -61,9 +58,15 @@ class TaskListAdapter(
                                 null
                             )
                         )
+
+                        isChooseBoxTask.buttonTintList =
+                            ColorStateList.valueOf(R.drawable.bg_chose_item_task_list)
+
                     }
                     Importance.REGULAR -> {
                         typeTask.isVisible = false
+                        isChooseBoxTask.buttonTintList =
+                            ColorStateList.valueOf(R.drawable.bg_chose_item_task_list)
                     }
                 }
             }
@@ -71,15 +74,15 @@ class TaskListAdapter(
 
         private fun Long?.toFormatDate(): String {
             val date = Date(this ?: 0)
-            val format = SimpleDateFormat("d MMMM yyyy", Locale("ru"))
+            val format = SimpleDateFormat("d MMM yyyy", Locale("ru"))
             return format.format(date)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemTaskListBinding.inflate(inflater)
-        val holder = ViewHolder(binding)
+        val holder = TaskViewHolder(binding, parent.context)
 
         holder.binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
             onChooseClickListener(getItem(holder.adapterPosition).copy(flag = isChecked))
@@ -111,15 +114,15 @@ class TaskListAdapter(
         return holder
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), holder.itemView.context)
+    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 }
 
 class TaskDiffUtil : DiffUtil.ItemCallback<TodoItem>() {
     override fun areItemsTheSame(oldItem: TodoItem, newItem: TodoItem): Boolean =
-        oldItem.id == newItem.id
+        oldItem == newItem
 
     override fun areContentsTheSame(oldItem: TodoItem, newItem: TodoItem): Boolean =
-        oldItem == newItem
+        oldItem.id == newItem.id
 }

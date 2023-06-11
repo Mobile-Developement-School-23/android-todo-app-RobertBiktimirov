@@ -15,7 +15,7 @@ class TodoItemRepository {
             addToDoItem(
                 TodoItem(
                     "toDoItemId $i",
-                    "купить сыр dp3f[fjke[jkef[ojkf[3oejp3jrpgijp3irjg]pij3r]pj3gp]ij3gpij3g]pij3gp]ij34gp]ij34gig4",
+                    "купить сыр и сварить суп",
                     randomImportance(),
                     randomDeadline(),
                     Random.nextBoolean(),
