@@ -9,7 +9,6 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_fragment_container_view"
         android:layout_width="match_parent"
-        android:name="com.template.todoapp.ui.main_screen.MainFragment"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_main" />
 

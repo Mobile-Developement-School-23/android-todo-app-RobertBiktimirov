@@ -3,4 +3,22 @@
     <string name="my_tasks">Мои дела</string>
     <string name="done_task">Выполнено - %s</string>
     <string name="isvisible">isVisible</string>
+    <string name="fab_add_task">floating_action_button_for_add_task</string>
+    <string name="close_task_edit">close_add_edit_task_screen</string>
+    <string name="save_task">сохранить</string>
+    <string name="hint_edit_add_task">Что надо сделать...</string>
+    <string name="importance">Важность</string>
+    <string name="title_deadline">Сделать до</string>
+    <string name="delete_text">Удалить</string>
+
+    <string name="importance_no">Нет</string>
+    <string name="importance_low">Низкий</string>
+    <string name="importance_urgent">!! Высокий</string>
+
+    <array name="spinner_values">
+        <item>Нет</item>
+        <item>Низкий</item>
+        <item>!! Высокий</item>
+    </array>
+
 </resources>

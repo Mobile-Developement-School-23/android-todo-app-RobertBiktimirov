@@ -5,7 +5,7 @@ import com.template.todoapp.data.TodoItemRepository
 
 class MainViewModel : ViewModel() {
 
-    private val todoItemRepository = TodoItemRepository()
+    private val todoItemRepository = TodoItemRepository
 
     val todoList = todoItemRepository.todoItemsFlow
 

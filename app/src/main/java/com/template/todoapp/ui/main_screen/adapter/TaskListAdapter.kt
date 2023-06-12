@@ -5,17 +5,19 @@ import android.content.res.ColorStateList
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StrikethroughSpan
-import com.template.todoapp.databinding.ItemTaskListBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.template.todoapp.R
+import com.template.todoapp.databinding.ItemTaskListBinding
 import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.ui.utli.toFormatDate
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,23 +62,30 @@ class TaskListAdapter(
                         )
 
                         isChooseBoxTask.buttonTintList =
-                            ColorStateList.valueOf(R.drawable.bg_chose_item_task_list)
+                            setupNormalColorStateList()
 
                     }
                     Importance.REGULAR -> {
                         typeTask.isVisible = false
                         isChooseBoxTask.buttonTintList =
-                            ColorStateList.valueOf(R.drawable.bg_chose_item_task_list)
+                            setupNormalColorStateList()
                     }
                 }
             }
         }
 
-        private fun Long?.toFormatDate(): String {
-            val date = Date(this ?: 0)
-            val format = SimpleDateFormat("d MMM yyyy", Locale("ru"))
-            return format.format(date)
-        }
+        private fun setupNormalColorStateList() = ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf(-android.R.attr.state_checked)
+            ),
+            intArrayOf(
+                ContextCompat.getColor(
+                    context,
+                    R.color.green_light_theme
+                ), ContextCompat.getColor(context, R.color.gray_light_light_theme)
+            )
+        )
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {

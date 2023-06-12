@@ -11,14 +11,11 @@
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/roboto</item>
+
 <!--        <item name="android:backgroundTint">@color/back_primary_light</item>-->
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
-    
-    <style name="Theme.ToDoApp.Main" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="colorSecondary">@color/secondary_light_theme</item>
-    </style>
-    
+
 </resources>

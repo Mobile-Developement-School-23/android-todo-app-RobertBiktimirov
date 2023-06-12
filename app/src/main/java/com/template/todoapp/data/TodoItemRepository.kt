@@ -5,7 +5,7 @@ import com.template.todoapp.domain.TodoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.random.Random
 
-class TodoItemRepository {
+object TodoItemRepository {
 
     private val todoItems = mutableListOf<TodoItem>()
     val todoItemsFlow: MutableStateFlow<List<TodoItem>> = MutableStateFlow(emptyList())
@@ -15,7 +15,7 @@ class TodoItemRepository {
             addToDoItem(
                 TodoItem(
                     "toDoItemId $i",
-                    "купить сыр и сварить суп",
+                    "купить сыр и сварить суп efpjp[jr[piij[pgj[pjpe[jpgrj[pgjpgerj[pregj[pj[prgj",
                     randomImportance(),
                     randomDeadline(),
                     Random.nextBoolean(),
@@ -43,7 +43,7 @@ class TodoItemRepository {
     private fun randomDeadline(): Long? {
         return when(Random.nextInt(0, 2)) {
             0 -> null
-            1 -> 3424368740
+            1 -> 9424368740
             else -> null
         }
     }

@@ -1,5 +1,8 @@
 package com.template.todoapp.domain
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 
 enum class Importance {
     LOW,
@@ -7,6 +10,7 @@ enum class Importance {
     URGENT
 }
 
+@Parcelize
 data class TodoItem(
     val id: String,
     val text: String,
@@ -15,4 +19,4 @@ data class TodoItem(
     var flag: Boolean = false,
     val dateOfCreating: Long,
     var dateOfEditing: Long? = null
-)
+): Parcelable
