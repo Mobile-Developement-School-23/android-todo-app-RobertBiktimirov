@@ -9,7 +9,7 @@ import kotlin.random.Random
 object TodoItemRepository {
 
     private val todoItems = mutableListOf<TodoItem>()
-    val todoItemsFlow: MutableStateFlow<MutableList<TodoItem>> = MutableStateFlow(mutableListOf())
+    val todoItemsFlow: MutableStateFlow<List<TodoItem>> = MutableStateFlow(mutableListOf())
 
     init {
         for (i in 0..20) {
@@ -47,7 +47,7 @@ object TodoItemRepository {
     fun deleteTodo(todoItem: TodoItem?) {
         if (todoItem != null) {
             val newTodoItems = todoItems.filter { it != todoItem }
-            todoItemsFlow.tryEmit(newTodoItems as MutableList<TodoItem>)
+            todoItemsFlow.tryEmit(newTodoItems)
             todoItems.remove(todoItem)
         }
     }

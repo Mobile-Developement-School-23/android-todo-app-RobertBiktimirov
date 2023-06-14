@@ -49,13 +49,12 @@ class MainFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.todoList.collect {
-                    taskListAdapter.submitList(it)
+                    taskListAdapter.submitList(it.reversed())
+
                     binding.doneCount.text = String.format(
                         getString(R.string.done_task),
                         it.filter { tFlag -> tFlag.flag }.size.toString()
                     )
-                    Log.d("test save task", "from main screen new list -> ${it.reversed()}")
-                    Log.d("test save task", it.filter { tFlag -> tFlag.flag }.size.toString())
                 }
             }
         }
@@ -75,7 +74,6 @@ class MainFragment : Fragment() {
     }
 
     private fun adapterChooseHandler(todoItem: TodoItem) {
-        Toast.makeText(requireContext(), todoItem.flag.toString(), Toast.LENGTH_SHORT).show()
         viewModel.editTodo(todoItem)
     }
 
