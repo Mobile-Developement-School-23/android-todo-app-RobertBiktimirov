@@ -7,6 +7,7 @@
     <string name="close_task_edit">close_add_edit_task_screen</string>
     <string name="save_task">сохранить</string>
     <string name="hint_edit_add_task">Что надо сделать...</string>
+    <string name="hint_error_null_task">Обязательно поле</string>
     <string name="importance">Важность</string>
     <string name="title_deadline">Сделать до</string>
     <string name="delete_text">Удалить</string>

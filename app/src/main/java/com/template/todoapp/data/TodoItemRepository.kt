@@ -1,5 +1,6 @@
 package com.template.todoapp.data
 
+import android.util.Log
 import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,14 +9,14 @@ import kotlin.random.Random
 object TodoItemRepository {
 
     private val todoItems = mutableListOf<TodoItem>()
-    val todoItemsFlow: MutableStateFlow<List<TodoItem>> = MutableStateFlow(emptyList())
+    val todoItemsFlow: MutableStateFlow<MutableList<TodoItem>> = MutableStateFlow(mutableListOf())
 
     init {
         for (i in 0..20) {
-            addToDoItem(
+            addTodoItem(
                 TodoItem(
                     "toDoItemId $i",
-                    "купить сыр и сварить суп efpjp[jr[piij[pgj[pjpe[jpgrj[pgjpgerj[pregj[pj[prgj",
+                    "$i купить сыр и сварить суп efpjp[jr[piij[pgj[pjpe[jpgrj[pgjpgerj[pregj[pj[prgj",
                     randomImportance(),
                     randomDeadline(),
                     Random.nextBoolean(),
@@ -26,9 +27,29 @@ object TodoItemRepository {
         }
     }
 
-    fun addToDoItem(todo: TodoItem) {
-        todoItems.add(todo)
+    fun addTodoItem(todoItem: TodoItem) {
+        todoItems.add(todoItem)
         todoItemsFlow.tryEmit(todoItems)
+    }
+
+    suspend fun updateTodo(todoItem: TodoItem) {
+        val positionTodo = todoItems.indexOfFirst { it.id == todoItem.id }
+        if (positionTodo != -1) {
+            todoItems[positionTodo] = todoItem
+            val newTodoItems = todoItems
+            Log.d("test save task", "from model -> position: $positionTodo todoItem: $todoItem")
+            todoItemsFlow.emit(newTodoItems)
+        } else {
+            throw IllegalArgumentException("TodoItem with id ${todoItem.id} not found.")
+        }
+    }
+
+    fun deleteTodo(todoItem: TodoItem?) {
+        if (todoItem != null) {
+            val newTodoItems = todoItems.filter { it != todoItem }
+            todoItemsFlow.tryEmit(newTodoItems as MutableList<TodoItem>)
+            todoItems.remove(todoItem)
+        }
     }
 
     private fun randomImportance(): Importance {
@@ -40,12 +61,12 @@ object TodoItemRepository {
         }
     }
 
+
     private fun randomDeadline(): Long? {
-        return when(Random.nextInt(0, 2)) {
+        return when (Random.nextInt(0, 2)) {
             0 -> null
             1 -> 9424368740
             else -> null
         }
     }
-
 }

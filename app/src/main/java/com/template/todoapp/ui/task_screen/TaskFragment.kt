@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -14,6 +14,7 @@ import com.template.todoapp.R
 import com.template.todoapp.databinding.FragmentTaskBinding
 import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.ui.main_screen.MainFragment
 import com.template.todoapp.ui.task_screen.spinner_adapter.SpinnerAdapter
 import com.template.todoapp.ui.utli.toFormatDate
 import kotlinx.coroutines.flow.collectLatest
@@ -44,16 +45,45 @@ class TaskFragment : Fragment() {
         initSpinner()
 
         arguments?.takeIf { it.containsKey(KEY_ARGS_TASK) }?.apply {
-            viewModel.todoItem.tryEmit(getParcelable(KEY_ARGS_TASK))
+            viewModel.setTodo((getParcelable(KEY_ARGS_TASK) as TodoItem?))
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.todoItem.collectLatest { todoItemNull ->
+            viewModel.todoItemState.collectLatest { todoItemNull ->
                 todoItemNull?.let { todoItem ->
                     changeUi(todoItem)
                 }
             }
+
+            viewModel.deadline.collectLatest {
+                binding.deadlineDate.text = it.toFormatDate()
+            }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.nullErrorText.collect {
+                if (it) {
+                    binding.editTextTask.background =
+                        ContextCompat.getDrawable(requireContext(), R.drawable.bg_error_input_task)
+                    binding.editTextTask.hint = getString(R.string.hint_error_null_task)
+                } else {
+                    binding.editTextTask.background =
+                        ContextCompat.getDrawable(requireContext(), R.drawable.bg_normal_input_task)
+                    binding.editTextTask.hint = getString(R.string.hint_edit_add_task)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.closeScreen.collect {
+                if (it) {
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_fragment_container_view, MainFragment())
+                        .commit()
+                }
+            }
+        }
+
 
         binding.deadlineSwitch.setOnCheckedChangeListener { _, isChecked ->
             binding.deadlineDate.isVisible = isChecked
@@ -61,37 +91,41 @@ class TaskFragment : Fragment() {
 
             if (isChecked) {
                 if (binding.deadlineDate.text == "") {
-                    binding.deadlineDate.text = binding.deadlineCalendar.date.toFormatDate()
+                    viewModel.setDeadline(binding.deadlineCalendar.date)
                 }
+            } else {
+                viewModel.setDeadline(null)
             }
         }
 
         binding.deleteButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Имитация выхода", Toast.LENGTH_SHORT).show()
+            viewModel.deleteTodo()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         binding.saveTask.setOnClickListener {
-            Toast.makeText(requireContext(), "Имитация сохранения", Toast.LENGTH_SHORT).show()
-            viewModel.saveTask(binding.importanceSpinner.selectedItem.toString())
+            val importance = when (binding.importanceSpinner.selectedItemPosition) {
+                0 -> Importance.REGULAR
+                1 -> Importance.LOW
+                2 -> Importance.URGENT
+                else -> {
+                    throw RuntimeException()
+                }
+            }
+            viewModel.saveTask(importance, Calendar.getInstance().timeInMillis)
         }
 
         binding.closeButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Имитация выхода", Toast.LENGTH_SHORT).show()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         binding.deadlineCalendar.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            binding.deadlineDate.text = GregorianCalendar(
-                year,
-                month,
-                dayOfMonth
-            ).timeInMillis.toFormatDate()
+            viewModel.setDeadline(GregorianCalendar(year, month, dayOfMonth).timeInMillis)
         }
 
         binding.editTextTask.doAfterTextChanged {
             viewModel.setTaskText(it.toString())
         }
-
-
     }
 
     private fun initSpinner() {
@@ -106,10 +140,11 @@ class TaskFragment : Fragment() {
     private fun changeUi(todoItem: TodoItem) {
         with(binding) {
             editTextTask.setText(todoItem.text)
+            viewModel.setTaskText(todoItem.text)
             when (todoItem.importance) {
                 Importance.LOW -> binding.importanceSpinner.setSelection(0)
                 Importance.REGULAR -> binding.importanceSpinner.setSelection(1)
-                Importance.URGENT -> binding.importanceSpinner.setSelection(0)
+                Importance.URGENT -> binding.importanceSpinner.setSelection(2)
             }
 
             deadlineDate.isVisible = todoItem.deadline != null
@@ -117,6 +152,7 @@ class TaskFragment : Fragment() {
             deadlineSwitch.isChecked = todoItem.deadline != null
 
             if (todoItem.deadline != null) {
+                deadlineCalendar.isVisible = true
                 deadlineCalendar.date = todoItem.deadline
             }
         }

@@ -1,7 +1,10 @@
 package com.template.todoapp.ui.main_screen
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.template.todoapp.data.TodoItemRepository
+import com.template.todoapp.domain.TodoItem
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
@@ -9,15 +12,13 @@ class MainViewModel : ViewModel() {
 
     val todoList = todoItemRepository.todoItemsFlow
 
-    fun addTodoItem() {
-
-    }
-
-    fun updateTodoItem(){
-
-    }
-
     fun deleteTodoItem() {
 
+    }
+
+    fun editTodo(todoItem: TodoItem){
+        viewModelScope.launch {
+            todoItemRepository.updateTodo(todoItem)
+        }
     }
 }

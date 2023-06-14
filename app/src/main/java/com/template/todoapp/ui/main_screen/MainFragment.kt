@@ -5,14 +5,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.template.todoapp.R
 import com.template.todoapp.databinding.FragmentMainBinding
 import com.template.todoapp.domain.TodoItem
 import com.template.todoapp.ui.main_screen.adapter.TaskListAdapter
+import com.template.todoapp.ui.task_screen.TaskFragment
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
@@ -42,14 +47,21 @@ class MainFragment : Fragment() {
         initUi()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.todoList.collect {
-                taskListAdapter.submitList(it)
-                binding.doneCount.text = String.format(
-                    getString(R.string.done_task),
-                    it.map { tFlag -> tFlag.flag }.size.toString()
-                )
-                Log.d("task_list_test", it.toString())
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.todoList.collect {
+                    taskListAdapter.submitList(it)
+                    binding.doneCount.text = String.format(
+                        getString(R.string.done_task),
+                        it.filter { tFlag -> tFlag.flag }.size.toString()
+                    )
+                    Log.d("test save task", "from main screen new list -> ${it.reversed()}")
+                    Log.d("test save task", it.filter { tFlag -> tFlag.flag }.size.toString())
+                }
             }
+        }
+
+        binding.addTaskButton.setOnClickListener {
+            openSetupTaskScreen(null)
         }
     }
 
@@ -63,10 +75,19 @@ class MainFragment : Fragment() {
     }
 
     private fun adapterChooseHandler(todoItem: TodoItem) {
-
+        Toast.makeText(requireContext(), todoItem.flag.toString(), Toast.LENGTH_SHORT).show()
+        viewModel.editTodo(todoItem)
     }
 
     private fun adapterInfoHandler(todoItem: TodoItem) {
-
+        openSetupTaskScreen(todoItem)
     }
+
+    private fun openSetupTaskScreen(todo: TodoItem?) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .addToBackStack(null)
+            .add(R.id.main_fragment_container_view, TaskFragment.getNewInstance(todo))
+            .commit()
+    }
+
 }

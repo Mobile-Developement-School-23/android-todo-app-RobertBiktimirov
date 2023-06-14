@@ -32,7 +32,7 @@
             android:minHeight="48dp"
             android:text="@string/save_task"
             android:textAllCaps="true"
-            android:textColor="@color/blue_light_theme"
+            android:textColor="@drawable/bg_save_text"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/close_button"
@@ -46,13 +46,12 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="30dp"
-            android:background="@drawable/bg_main_rv"
+            android:background="@drawable/bg_normal_input_task"
             android:gravity="top|start"
             android:hint="@string/hint_edit_add_task"
             android:importantForAutofill="no"
             android:inputType="textMultiLine"
             android:minHeight="100dp"
-            android:paddingHorizontal="16dp"
             android:scrollbars="vertical"
             android:scrollHorizontally="false"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +75,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="0dp"
-            app:layout_constraintStart_toStartOf="@id/importance_title"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/importance_title" />
 
 
