@@ -14,13 +14,13 @@ class MainViewModel : ViewModel() {
 
     val todoList = todoItemRepository.todoItemsFlow
 
-    fun deleteTodoItem() {
-
-    }
-
     fun editTodo(todoItem: TodoItem){
         viewModelScope.launch {
             todoItemRepository.updateTodo(todoItem)
         }
+    }
+
+    fun deleteTodo(todoItem: TodoItem) {
+        todoItemRepository.deleteTodo(todoItem)
     }
 }

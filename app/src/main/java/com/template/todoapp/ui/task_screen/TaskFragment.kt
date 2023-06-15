@@ -77,9 +77,7 @@ class TaskFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.closeScreen.collect {
                 if (it) {
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_fragment_container_view, MainFragment())
-                        .commit()
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
         }

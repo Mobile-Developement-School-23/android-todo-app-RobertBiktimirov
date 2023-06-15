@@ -25,9 +25,16 @@ class TaskListAdapter(
     private val onChooseClickListener: ((TodoItem) -> Unit),
     private val onInfoClickListener: ((TodoItem) -> Unit)
 ) : ListAdapter<TodoItem, TaskListAdapter.TaskViewHolder>(TaskDiffUtil()) {
+
+    private val _mapTodoItem = mutableMapOf<Int, TodoItem>()
+    val mapTodoItem get() = _mapTodoItem.toMap()
+
     inner class TaskViewHolder(val binding: ItemTaskListBinding, private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(todoItem: TodoItem) {
+
+            _mapTodoItem[this.adapterPosition] = todoItem
+
             with(binding) {
                 titleTask.text = todoItem.text
                 dataTask.text = todoItem.deadline.toFormatDate()

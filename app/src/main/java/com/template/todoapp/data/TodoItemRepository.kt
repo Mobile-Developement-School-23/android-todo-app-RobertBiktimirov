@@ -32,13 +32,11 @@ object TodoItemRepository {
         todoItemsFlow.tryEmit(todoItems)
     }
 
-    suspend fun updateTodo(todoItem: TodoItem) {
+    fun updateTodo(todoItem: TodoItem) {
         val positionTodo = todoItems.indexOfFirst { it.id == todoItem.id }
         if (positionTodo != -1) {
             todoItems[positionTodo] = todoItem
-            val newTodoItems = todoItems
-            Log.d("test save task", "from model -> position: $positionTodo todoItem: $todoItem")
-            todoItemsFlow.emit(newTodoItems)
+            todoItemsFlow.tryEmit(todoItems)
         } else {
             throw IllegalArgumentException("TodoItem with id ${todoItem.id} not found.")
         }

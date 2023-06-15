@@ -6,6 +6,7 @@ import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.Calendar
 
 class TaskViewModel : ViewModel() {
 
@@ -53,9 +54,23 @@ class TaskViewModel : ViewModel() {
                     )
                 )
                 _closeScreen.tryEmit(true)
+            } else {
+                todoItemState.value?.let {
+                    todoItemRepository.updateTodo(
+                        TodoItem(
+                            it.id,
+                            taskText.value,
+                            importance,
+                            deadline.value,
+                            it.flag,
+                            it.dateOfCreating,
+                            Calendar.getInstance().timeInMillis
+                        )
+                    )
+                }
+
+                _closeScreen.tryEmit(true)
             }
-
-
         } else {
             _nullErrorText.tryEmit(true)
         }
