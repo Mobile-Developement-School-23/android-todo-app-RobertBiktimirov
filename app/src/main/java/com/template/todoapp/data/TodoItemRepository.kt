@@ -37,8 +37,6 @@ object TodoItemRepository {
         if (positionTodo != -1) {
             todoItems[positionTodo] = todoItem
             todoItemsFlow.tryEmit(todoItems)
-        } else {
-            throw IllegalArgumentException("TodoItem with id ${todoItem.id} not found.")
         }
     }
 

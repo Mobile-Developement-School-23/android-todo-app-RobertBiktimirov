@@ -115,10 +115,12 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
         val todoItem = taskListAdapter.mapTodoItem[position]
             ?: throw RuntimeException("not found todoItem in list")
         viewModel.deleteTodo(todoItem)
+        taskListAdapter.notifyItemChanged(position)
     }
 
     override fun subscribeOnTask(position: Int) {
-
+        taskListAdapter.mapTodoItem[position]?.flag = !(taskListAdapter.mapTodoItem[position]?.flag ?: false)
+        taskListAdapter.notifyItemChanged(position)
     }
 
 }
