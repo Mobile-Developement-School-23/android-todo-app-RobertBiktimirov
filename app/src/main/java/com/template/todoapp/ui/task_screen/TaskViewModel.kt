@@ -1,16 +1,23 @@
 package com.template.todoapp.ui.task_screen
 
 import androidx.lifecycle.ViewModel
-import com.template.todoapp.data.TodoItemRepository
+import androidx.lifecycle.viewModelScope
 import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.usecase.DeleteTodoUseCase
+import com.template.todoapp.domain.usecase.SaveTodoItemUseCase
+import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.Calendar
+import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
 
-class TaskViewModel : ViewModel() {
-
-    private val todoItemRepository = TodoItemRepository
+class TaskViewModel @Inject constructor(
+    private val deleteTodoUseCase: DeleteTodoUseCase,
+    private val saveTodoItemUseCase: SaveTodoItemUseCase,
+    private val updateTodoListUseCase: UpdateTodoListUseCase
+): ViewModel() {
 
     private val _todoItemState = MutableStateFlow<TodoItem?>(null)
     val todoItemState = _todoItemState.asStateFlow()
@@ -38,11 +45,18 @@ class TaskViewModel : ViewModel() {
         _deadline.tryEmit(deadline)
     }
 
+
     fun saveTask(importance: Importance, dateOfCreating: Long) {
+        viewModelScope.launch {
+            saveOrUpdateTask(importance, dateOfCreating)
+        }
+    }
+
+    private suspend fun saveOrUpdateTask(importance: Importance, dateOfCreating: Long) {
 
         if (taskText.value.isNotEmpty()) {
             if (_todoItemState.value == null) {
-                todoItemRepository.addTodoItem(
+                saveTodoItemUseCase(
                     TodoItem(
                         generateTodoId(),
                         taskText.value,
@@ -56,7 +70,7 @@ class TaskViewModel : ViewModel() {
                 _closeScreen.tryEmit(true)
             } else {
                 todoItemState.value?.let {
-                    todoItemRepository.updateTodo(
+                    updateTodoListUseCase(
                         TodoItem(
                             it.id,
                             taskText.value,
@@ -77,10 +91,15 @@ class TaskViewModel : ViewModel() {
     }
 
     fun deleteTodo() {
-        todoItemRepository.deleteTodo(_todoItemState.value)
+        viewModelScope.launch {
+            _todoItemState.value?.let {
+                deleteTodoUseCase(it)
+            }
+        }
     }
 
     private fun generateTodoId() = "randomId ${taskText.value.hashCode()}"
+
     fun setTodo(todoItem: TodoItem?) {
         _todoItemState.tryEmit(todoItem)
     }

@@ -48,7 +48,6 @@ class TaskListAdapter(
                                 null
                             )
                         )
-                        typeTask.isVisible = true
                         typeTask.setImageDrawable(
                             ResourcesCompat.getDrawable(
                                 context.resources,
@@ -59,7 +58,6 @@ class TaskListAdapter(
 
                     }
                     Importance.LOW -> {
-                        typeTask.isVisible = true
                         typeTask.setImageDrawable(
                             ResourcesCompat.getDrawable(
                                 context.resources,
@@ -73,7 +71,7 @@ class TaskListAdapter(
 
                     }
                     Importance.REGULAR -> {
-                        typeTask.isVisible = false
+                        typeTask.setImageDrawable(null)
                         isChooseBoxTask.buttonTintList =
                             setupNormalColorStateList()
                     }

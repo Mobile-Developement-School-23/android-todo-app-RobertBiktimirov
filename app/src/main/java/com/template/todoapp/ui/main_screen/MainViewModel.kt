@@ -2,25 +2,39 @@ package com.template.todoapp.ui.main_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.template.todoapp.data.TodoItemRepository
 import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.usecase.DeleteTodoUseCase
+import com.template.todoapp.domain.usecase.GetTodoListUseCase
+import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
+class MainViewModel @Inject constructor(
+    getTodoListUseCase: GetTodoListUseCase,
+    private val deleteTodoUseCase: DeleteTodoUseCase,
+    private val updateTodoListUseCase: UpdateTodoListUseCase
+) : ViewModel() {
 
-    private val todoItemRepository = TodoItemRepository
+    val todoList = getTodoListUseCase()
 
-    val todoList = todoItemRepository.todoItemsFlow
+    private val _emptinessTodoList = MutableStateFlow(false)
+    val emptinessTodoList = _emptinessTodoList.asStateFlow()
 
-    fun editTodo(todoItem: TodoItem){
+    fun setIsEmptyList(flag: Boolean){
+        _emptinessTodoList.tryEmit(flag)
+    }
+
+    fun updateTodo(todoItem: TodoItem){
         viewModelScope.launch {
-            todoItemRepository.updateTodo(todoItem)
+            updateTodoListUseCase(todoItem)
         }
     }
 
     fun deleteTodo(todoItem: TodoItem) {
-        todoItemRepository.deleteTodo(todoItem)
+        viewModelScope.launch {
+            deleteTodoUseCase(todoItem)
+        }
     }
 }

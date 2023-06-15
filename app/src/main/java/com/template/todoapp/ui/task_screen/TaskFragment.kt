@@ -1,5 +1,6 @@
 package com.template.todoapp.ui.task_screen
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,23 +12,33 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.template.todoapp.R
+import com.template.todoapp.app.appComponent
 import com.template.todoapp.databinding.FragmentTaskBinding
+import com.template.todoapp.di.viewmodels.ViewModelFactory
 import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
-import com.template.todoapp.ui.main_screen.MainFragment
 import com.template.todoapp.ui.task_screen.spinner_adapter.SpinnerAdapter
 import com.template.todoapp.ui.utli.toFormatDate
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
 class TaskFragment : Fragment() {
 
     private var _binding: FragmentTaskBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("binding not must be null")
 
-    private val viewModel: TaskViewModel by lazy {
-        ViewModelProvider(this)[TaskViewModel::class.java]
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        context.appComponent.inject(this)
     }
 
     override fun onCreateView(

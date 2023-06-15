@@ -1,12 +1,14 @@
 package com.template.todoapp.ui.main_screen
 
-import android.content.ClipData.Item
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -15,20 +17,26 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.template.todoapp.R
+import com.template.todoapp.app.appComponent
 import com.template.todoapp.databinding.FragmentMainBinding
+import com.template.todoapp.di.viewmodels.ViewModelFactory
 import com.template.todoapp.domain.TodoItem
 import com.template.todoapp.ui.main_screen.adapter.TaskListAdapter
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
 import com.template.todoapp.ui.task_screen.TaskFragment
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("binding not must be null")
 
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
     }
 
     private val taskListAdapter by lazy {
@@ -37,6 +45,12 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
     private val taskListTouchHelper by lazy {
         TaskListTouchHelper(requireContext(), this)
+    }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        context.appComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -54,9 +68,17 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.todoList.collect {
+                    viewModel.setIsEmptyList(it.isEmpty())
                     taskListAdapter.submitList(it)
+                    setCountDoneTask(it)
                     Log.d("test save task", it.reversed().toString())
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.emptinessTodoList.collect {
+                binding.viewEmptyList.isVisible = it
             }
         }
 
@@ -91,13 +113,18 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
     }
 
+    private fun setCountDoneTask(todoList: List<TodoItem>) {
+        val count = todoList.filter { it.flag }.size.toString()
+        binding.doneCount.text = String.format(getString(R.string.done_task), count)
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
     }
 
     private fun adapterChooseHandler(todoItem: TodoItem) {
-        viewModel.editTodo(todoItem)
+        viewModel.updateTodo(todoItem)
     }
 
     private fun adapterInfoHandler(todoItem: TodoItem) {
@@ -118,7 +145,8 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     }
 
     override fun subscribeOnTask(position: Int) {
-        taskListAdapter.mapTodoItem[position]?.flag = !(taskListAdapter.mapTodoItem[position]?.flag ?: false)
+        taskListAdapter.mapTodoItem[position]?.flag =
+            !(taskListAdapter.mapTodoItem[position]?.flag ?: false)
         taskListAdapter.notifyItemChanged(position)
     }
 

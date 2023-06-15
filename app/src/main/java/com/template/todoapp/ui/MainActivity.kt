@@ -3,12 +3,15 @@ package com.template.todoapp.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.template.todoapp.R
+import com.template.todoapp.app.appComponent
 import com.template.todoapp.ui.main_screen.MainFragment
 import com.template.todoapp.ui.task_screen.TaskFragment
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appComponent.inject(this)
         setContentView(R.layout.activity_main)
 
 
