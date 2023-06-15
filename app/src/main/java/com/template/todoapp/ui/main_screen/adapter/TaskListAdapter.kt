@@ -122,9 +122,10 @@ class TaskListAdapter(
 
         }
 
-        holder.binding.infoTask.setOnClickListener {
+        holder.binding.bodyTask.setOnClickListener {
             onInfoClickListener(getItem(holder.adapterPosition))
         }
+
 
 
         return holder

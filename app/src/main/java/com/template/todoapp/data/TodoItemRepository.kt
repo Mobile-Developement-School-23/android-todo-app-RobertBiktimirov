@@ -42,8 +42,15 @@ object TodoItemRepository {
 
     fun deleteTodo(todoItem: TodoItem?) {
         if (todoItem != null) {
-            val newTodoItems = todoItems.filter { it != todoItem }
-            todoItemsFlow.tryEmit(newTodoItems)
+            val newList = mutableListOf<TodoItem>()
+
+            todoItems.forEach {
+                if (it != todoItem) {
+                    newList.add(it)
+                }
+            }
+
+            todoItemsFlow.tryEmit(newList)
             todoItems.remove(todoItem)
         }
     }

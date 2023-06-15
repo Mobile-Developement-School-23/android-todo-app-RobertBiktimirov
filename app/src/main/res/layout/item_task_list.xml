@@ -28,43 +28,61 @@
         tools:src="@drawable/arrow" />
 
 
-    <TextView
-        android:id="@+id/title_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="52dp"
-        android:ellipsize="end"
-        android:maxWidth="240dp"
-        android:maxLines="3"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/type_task"
-        app:layout_constraintTop_toTopOf="@id/is_choose_box_task"
-        tools:text="Купить сыр" />
-
-    <TextView
-        android:id="@+id/data_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:alpha="0.3"
+    <FrameLayout
+        android:id="@+id/body_task"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/title_task"
-        app:layout_constraintTop_toBottomOf="@id/title_task"
-        tools:text="22-05-2012" />
-
-    <ImageView
-        android:id="@+id/info_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/info_outline"
-        app:layout_constraintBottom_toBottomOf="@id/is_choose_box_task"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/title_task"
-        app:layout_constraintTop_toTopOf="@id/is_choose_box_task" />
+        app:layout_constraintStart_toEndOf="@id/type_task"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="52dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="52dp"
+                android:layout_marginTop="14dp"
+                android:ellipsize="end"
+                android:maxWidth="240dp"
+                android:maxLines="3"
+                android:textSize="16sp"
+                tools:text="Купить сыр" />
+
+
+            <TextView
+                android:id="@+id/data_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:alpha="0.3"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="12dp"
+                tools:text="22-05-2012" />
+        </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/info_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/info_outline"
+                android:layout_marginTop="14dp"
+                android:layout_gravity="end|top"/>
+
+
+
+    </FrameLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
