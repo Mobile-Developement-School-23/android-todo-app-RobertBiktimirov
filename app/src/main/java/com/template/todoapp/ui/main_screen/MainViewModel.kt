@@ -7,7 +7,9 @@ import com.template.todoapp.domain.usecase.DeleteTodoUseCase
 import com.template.todoapp.domain.usecase.GetTodoListUseCase
 import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,16 +19,26 @@ class MainViewModel @Inject constructor(
     private val updateTodoListUseCase: UpdateTodoListUseCase
 ) : ViewModel() {
 
+    var isVisibleDone: Boolean = false
+        set(value) {
+            field = value
+            _isVisibleDoneTask.tryEmit(value)
+        }
+
     val todoList = getTodoListUseCase()
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    private val _isVisibleDoneTask: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isVisibleDoneTask get() = _isVisibleDoneTask.asStateFlow()
 
     private val _emptinessTodoList = MutableStateFlow(false)
     val emptinessTodoList = _emptinessTodoList.asStateFlow()
 
-    fun setIsEmptyList(flag: Boolean){
+    fun setIsEmptyList(flag: Boolean) {
         _emptinessTodoList.tryEmit(flag)
     }
 
-    fun updateTodo(todoItem: TodoItem){
+    fun updateTodo(todoItem: TodoItem) {
         viewModelScope.launch {
             updateTodoListUseCase(todoItem)
         }
@@ -37,4 +49,6 @@ class MainViewModel @Inject constructor(
             deleteTodoUseCase(todoItem)
         }
     }
+
+
 }

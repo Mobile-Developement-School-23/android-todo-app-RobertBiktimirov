@@ -18,4 +18,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+
+
+
+    <style name="TaskMainRecycler">
+        <item name="background">@drawable/bg_main_rv</item>
+    </style>
+
 </resources>

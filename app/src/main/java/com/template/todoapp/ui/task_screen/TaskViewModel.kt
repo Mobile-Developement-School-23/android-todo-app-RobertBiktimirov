@@ -17,7 +17,7 @@ class TaskViewModel @Inject constructor(
     private val deleteTodoUseCase: DeleteTodoUseCase,
     private val saveTodoItemUseCase: SaveTodoItemUseCase,
     private val updateTodoListUseCase: UpdateTodoListUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _todoItemState = MutableStateFlow<TodoItem?>(null)
     val todoItemState = _todoItemState.asStateFlow()
@@ -98,7 +98,8 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    private fun generateTodoId() = "randomId ${taskText.value.hashCode()}"
+    private fun generateTodoId() =
+        "${taskText.value.hashCode()} - ${Calendar.getInstance().timeInMillis}"
 
     fun setTodo(todoItem: TodoItem?) {
         _todoItemState.tryEmit(todoItem)

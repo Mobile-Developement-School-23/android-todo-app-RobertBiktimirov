@@ -18,8 +18,7 @@ import com.template.todoapp.databinding.ItemTaskListBinding
 import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
 import com.template.todoapp.ui.utli.toFormatDate
-import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale.filter
 
 class TaskListAdapter(
     private val onChooseClickListener: ((TodoItem) -> Unit),
@@ -29,17 +28,23 @@ class TaskListAdapter(
     private val _mapTodoItem = mutableMapOf<Int, TodoItem>()
     val mapTodoItem get() = _mapTodoItem.toMap()
 
+    private val mapHolders = mutableMapOf<Int, TaskViewHolder>()
+
+
     inner class TaskViewHolder(val binding: ItemTaskListBinding, private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(todoItem: TodoItem) {
 
-            _mapTodoItem[this.adapterPosition] = todoItem
+            mapHolders[adapterPosition] = this
 
             with(binding) {
+
                 titleTask.text = todoItem.text
                 dataTask.text = todoItem.deadline.toFormatDate()
                 dataTask.isVisible = todoItem.deadline != null
                 isChooseBoxTask.isChecked = todoItem.flag
+                setupDisplayTaskText(this@TaskViewHolder, false)
+
                 when (todoItem.importance) {
                     Importance.URGENT -> {
                         isChooseBoxTask.buttonTintList = ColorStateList.valueOf(
@@ -100,24 +105,7 @@ class TaskListAdapter(
 
         holder.binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
             onChooseClickListener(getItem(holder.adapterPosition).copy(flag = isChecked))
-
-            with(holder.binding) {
-                if (isChecked) {
-                    val spannableString = SpannableString(titleTask.text)
-                    spannableString.setSpan(
-                        StrikethroughSpan(),
-                        0,
-                        spannableString.length,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    titleTask.text = spannableString
-                    titleTask.alpha = 0.3F
-                } else {
-                    titleTask.alpha = 1F
-                    titleTask.text = getItem(holder.adapterPosition).text
-                }
-            }
-
+            setupDisplayTaskText(holder, isChecked)
         }
 
         holder.binding.bodyTask.setOnClickListener {
@@ -125,13 +113,36 @@ class TaskListAdapter(
         }
 
 
-
         return holder
     }
+
+    private fun TaskListAdapter.setupDisplayTaskText(
+        holder: TaskViewHolder,
+        isChecked: Boolean
+    ) {
+        with(holder.binding) {
+            if (isChecked || getItem(holder.adapterPosition).flag) {
+                val spannableString = SpannableString(titleTask.text)
+                spannableString.setSpan(
+                    StrikethroughSpan(),
+                    0,
+                    spannableString.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                titleTask.text = spannableString
+                titleTask.alpha = 0.3F
+            } else {
+                titleTask.alpha = 1F
+                titleTask.text = getItem(holder.adapterPosition).text
+            }
+        }
+    }
+
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
+
 }
 
 class TaskDiffUtil : DiffUtil.ItemCallback<TodoItem>() {

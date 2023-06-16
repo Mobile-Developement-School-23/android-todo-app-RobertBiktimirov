@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -24,6 +23,8 @@ import com.template.todoapp.domain.TodoItem
 import com.template.todoapp.ui.main_screen.adapter.TaskListAdapter
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
 import com.template.todoapp.ui.task_screen.TaskFragment
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -71,6 +72,7 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
                     viewModel.setIsEmptyList(it.isEmpty())
                     taskListAdapter.submitList(it)
                     setCountDoneTask(it)
+
                     Log.d("test save task", it.reversed().toString())
                 }
             }
@@ -79,24 +81,43 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.emptinessTodoList.collect {
                 binding.viewEmptyList.isVisible = it
+                binding.taskList.isVisible = !it
             }
         }
 
         binding.addTaskButton.setOnClickListener {
             openSetupTaskScreen(null)
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isVisibleDoneTask.collectLatest { flag ->
+                    if (flag) {
+                        taskListAdapter.submitList(viewModel.todoList.value.filter { item -> !item.flag })
+                    } else {
+                        taskListAdapter.submitList(viewModel.todoList.value)
+                    }
+                }
+            }
+        }
+
+        binding.isVisibleDoneTask.setOnClickListener {
+            binding.isVisibleDoneTask.isActivated = !binding.isVisibleDoneTask.isActivated
+            viewModel.isVisibleDone = binding.isVisibleDoneTask.isActivated
+        }
     }
 
     private fun initUi() {
-        binding.taskList.adapter = taskListAdapter
-        binding.taskList.setHasFixedSize(true)
-        binding.taskList.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.VERTICAL,
-            false
-        ).apply {
-            reverseLayout = true
-            stackFromEnd = true
+        binding.taskList.run {
+            adapter = taskListAdapter
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            ).apply {
+                reverseLayout = true
+                stackFromEnd = true
+            }
         }
 
 
@@ -139,9 +160,7 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     }
 
     override fun deleteTask(position: Int) {
-        val todoItem = taskListAdapter.mapTodoItem[position]
-            ?: throw RuntimeException("not found todoItem in list")
-        viewModel.deleteTodo(todoItem)
+        viewModel.deleteTodo(taskListAdapter.currentList[position])
     }
 
     override fun subscribeOnTask(position: Int) {

@@ -30,6 +30,14 @@ class TodoItemRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateTodoItem(todoItem: TodoItem) {
-        return todoDao.updateTodoItem(todoItem.toEntity())
+        val entity = todoItem.toEntity()
+        return todoDao.updateTodoItem(
+            entity.text,
+            entity.importance,
+            entity.deadline,
+            if (entity.flag) 1 else 0,
+            entity.dateOfCreating,
+            entity.id
+        )
     }
 }
