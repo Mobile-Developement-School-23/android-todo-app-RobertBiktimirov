@@ -20,7 +20,7 @@ import kotlin.properties.Delegates
 class TaskListTouchHelper(
     private val context: Context,
     private val setupTaskBySwipeImpl: SetupTaskBySwipe
-) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
     private val deleteIcon: Drawable =
         ContextCompat.getDrawable(context, R.drawable.white_delete) ?: throwErrorIcon()

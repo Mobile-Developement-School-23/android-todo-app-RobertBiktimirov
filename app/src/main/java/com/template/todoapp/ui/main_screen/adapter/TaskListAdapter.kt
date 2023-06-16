@@ -18,7 +18,6 @@ import com.template.todoapp.databinding.ItemTaskListBinding
 import com.template.todoapp.domain.Importance
 import com.template.todoapp.domain.TodoItem
 import com.template.todoapp.ui.utli.toFormatDate
-import java.util.Locale.filter
 
 class TaskListAdapter(
     private val onChooseClickListener: ((TodoItem) -> Unit),
@@ -42,7 +41,7 @@ class TaskListAdapter(
                 titleTask.text = todoItem.text
                 dataTask.text = todoItem.deadline.toFormatDate()
                 dataTask.isVisible = todoItem.deadline != null
-                isChooseBoxTask.isChecked = todoItem.flag
+                isChooseBoxTask.isChecked = todoItem.isCompleted
                 setupDisplayTaskText(this@TaskViewHolder, false)
 
                 when (todoItem.importance) {
@@ -104,7 +103,7 @@ class TaskListAdapter(
         val holder = TaskViewHolder(binding, parent.context)
 
         holder.binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
-            onChooseClickListener(getItem(holder.adapterPosition).copy(flag = isChecked))
+            onChooseClickListener(getItem(holder.adapterPosition).copy(isCompleted = isChecked))
             setupDisplayTaskText(holder, isChecked)
         }
 
@@ -121,7 +120,7 @@ class TaskListAdapter(
         isChecked: Boolean
     ) {
         with(holder.binding) {
-            if (isChecked || getItem(holder.adapterPosition).flag) {
+            if (isChecked || getItem(holder.adapterPosition).isCompleted) {
                 val spannableString = SpannableString(titleTask.text)
                 spannableString.setSpan(
                     StrikethroughSpan(),

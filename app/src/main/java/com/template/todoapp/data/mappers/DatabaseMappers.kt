@@ -8,7 +8,7 @@ fun TodoItem.toEntity() = TodoItemEntity(
     text = text,
     importance = importance,
     deadline = deadline,
-    flag = flag,
+    flag = isCompleted,
     dateOfCreating = dateOfCreating,
     dateOfEditing = dateOfEditing
 )

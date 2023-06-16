@@ -15,9 +15,11 @@
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:backgroundTint="@android:color/transparent"
+            android:layout_height="wrap_content"
+            app:expandedTitleMarginBottom="50dp"
+            app:expandedTitleMarginStart="60dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -58,7 +60,8 @@
                     android:src="@drawable/src_is_visibility"
                     app:layout_constraintBottom_toBottomOf="@id/done_count"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/done_count" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -76,7 +76,7 @@ class TaskViewModel @Inject constructor(
                             taskText.value,
                             importance,
                             deadline.value,
-                            it.flag,
+                            it.isCompleted,
                             it.dateOfCreating,
                             Calendar.getInstance().timeInMillis
                         )

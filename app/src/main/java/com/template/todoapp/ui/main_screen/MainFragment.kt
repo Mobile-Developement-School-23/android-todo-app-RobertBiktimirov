@@ -2,7 +2,6 @@ package com.template.todoapp.ui.main_screen
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -23,7 +22,6 @@ import com.template.todoapp.domain.TodoItem
 import com.template.todoapp.ui.main_screen.adapter.TaskListAdapter
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
 import com.template.todoapp.ui.task_screen.TaskFragment
-import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -72,8 +70,6 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
                     viewModel.setIsEmptyList(it.isEmpty())
                     taskListAdapter.submitList(it)
                     setCountDoneTask(it)
-
-                    Log.d("test save task", it.reversed().toString())
                 }
             }
         }
@@ -92,12 +88,12 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isVisibleDoneTask.collectLatest { flag ->
-                    if (flag) {
-                        val listOfVisible = viewModel.todoList.value.filter { item -> !item.flag }
-                        taskListAdapter.submitList(listOfVisible)
+                    val listItemTodo: List<TodoItem> = if (flag) {
+                        viewModel.todoList.value.filter { item -> !item.isCompleted }
                     } else {
-                        taskListAdapter.submitList(viewModel.todoList.value)
+                        viewModel.todoList.value
                     }
+                    taskListAdapter.submitList(listItemTodo)
                 }
             }
         }
@@ -136,7 +132,7 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     }
 
     private fun setCountDoneTask(todoList: List<TodoItem>) {
-        val count = todoList.filter { it.flag }.size.toString()
+        val count = todoList.filter { it.isCompleted }.size.toString()
         binding.doneCount.text = String.format(getString(R.string.done_task), count)
     }
 
@@ -155,6 +151,7 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
     private fun openSetupTaskScreen(todo: TodoItem?) {
         requireActivity().supportFragmentManager.beginTransaction()
+            .setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
             .add(R.id.main_fragment_container_view, TaskFragment.getNewInstance(todo))
             .addToBackStack(null)
             .commit()
@@ -165,8 +162,8 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     }
 
     override fun subscribeOnTask(position: Int) {
-        taskListAdapter.mapTodoItem[position]?.flag =
-            !(taskListAdapter.mapTodoItem[position]?.flag ?: false)
+        taskListAdapter.mapTodoItem[position]?.isCompleted =
+            !(taskListAdapter.mapTodoItem[position]?.isCompleted ?: false)
         taskListAdapter.notifyItemChanged(position)
     }
 

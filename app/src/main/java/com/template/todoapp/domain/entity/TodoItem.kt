@@ -2,6 +2,7 @@ package com.template.todoapp.domain
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 
 enum class Importance {
@@ -16,7 +17,7 @@ data class TodoItem(
     val text: String,
     val importance: Importance,
     val deadline: Long?,
-    var flag: Boolean = false,
+    var isCompleted: Boolean = false,
     val dateOfCreating: Long,
     var dateOfEditing: Long? = null
 ): Parcelable
