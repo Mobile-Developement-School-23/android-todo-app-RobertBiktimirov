@@ -93,7 +93,8 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isVisibleDoneTask.collectLatest { flag ->
                     if (flag) {
-                        taskListAdapter.submitList(viewModel.todoList.value.filter { item -> !item.flag })
+                        val listOfVisible = viewModel.todoList.value.filter { item -> !item.flag }
+                        taskListAdapter.submitList(listOfVisible)
                     } else {
                         taskListAdapter.submitList(viewModel.todoList.value)
                     }
