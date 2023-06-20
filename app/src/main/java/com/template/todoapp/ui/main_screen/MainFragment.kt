@@ -123,7 +123,6 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
         binding.taskList.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
-                // Вызываем метод clearSwipeState() после отпускания свайпа
                 taskListTouchHelper.clearState()
             }
             false

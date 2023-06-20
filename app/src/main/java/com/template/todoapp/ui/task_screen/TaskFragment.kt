@@ -157,9 +157,8 @@ class TaskFragment : Fragment() {
             }
 
             deadlineDate.isVisible = todoItem.deadline != null
-            deadlineDate.text = todoItem.deadline.toFormatDate()
             deadlineSwitch.isChecked = todoItem.deadline != null
-
+            viewModel.setDeadline(todoItem.deadline)
             if (todoItem.deadline != null) {
                 deadlineCalendar.isVisible = true
                 deadlineCalendar.date = todoItem.deadline
