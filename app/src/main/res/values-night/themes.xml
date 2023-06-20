@@ -17,6 +17,7 @@
         <item name="back_primary">@color/back_dark_primary</item>
         <item name="back_secondary">@color/back_dark_secondary</item>
         <item name="back_elevated">@color/back_dark_elevated</item>
+        <item name="back_error_input">@color/back_error_input_text_dark</item>
     </style>
 
 </resources>
