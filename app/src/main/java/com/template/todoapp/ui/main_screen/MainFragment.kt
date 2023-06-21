@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -64,6 +66,7 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
         super.onViewCreated(view, savedInstanceState)
         initUi()
 
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.todoList.collect {
@@ -78,6 +81,16 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             viewModel.emptinessTodoList.collect {
                 binding.viewEmptyList.isVisible = it
                 binding.taskList.isVisible = !it
+
+                if (it) {
+                    binding.addTaskButton.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            requireContext(),
+                            R.anim.shaking_add_task_button
+                        )
+                    )
+                }
+
             }
         }
 
