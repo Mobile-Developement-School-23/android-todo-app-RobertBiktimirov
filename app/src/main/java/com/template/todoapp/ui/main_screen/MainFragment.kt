@@ -83,15 +83,15 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
                 binding.taskList.isVisible = !it
 
                 if (it) {
-                    binding.addTaskButton.startAnimation(
-                        AnimationUtils.loadAnimation(
-                            requireContext(),
-                            R.anim.shaking_add_task_button
-                        )
-                    )
+                    startAnimForAddButton()
                 }
 
             }
+        }
+
+        binding.addTaskButton.setOnLongClickListener {
+            startAnimForAddButton()
+            true
         }
 
         binding.addTaskButton.setOnClickListener {
@@ -115,6 +115,15 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             binding.isVisibleDoneTask.isActivated = !binding.isVisibleDoneTask.isActivated
             viewModel.isVisibleDone = binding.isVisibleDoneTask.isActivated
         }
+    }
+
+    private fun startAnimForAddButton() {
+        binding.addTaskButton.startAnimation(
+            AnimationUtils.loadAnimation(
+                requireContext(),
+                R.anim.shaking_add_task_button
+            )
+        )
     }
 
     private fun initUi() {
