@@ -1,7 +1,7 @@
 package com.template.todoapp.data.database.converter
 
 import androidx.room.TypeConverter
-import com.template.todoapp.domain.Importance
+import com.template.todoapp.domain.entity.Importance
 
 class ImportanceConverter {
 

@@ -2,6 +2,7 @@ package com.template.todoapp.ui.task_screen
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,11 +16,10 @@ import com.template.todoapp.R
 import com.template.todoapp.app.appComponent
 import com.template.todoapp.databinding.FragmentTaskBinding
 import com.template.todoapp.di.viewmodels.ViewModelFactory
-import com.template.todoapp.domain.Importance
-import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.entity.Importance
+import com.template.todoapp.domain.entity.TodoItem
 import com.template.todoapp.ui.task_screen.spinner_adapter.SpinnerAdapter
 import com.template.todoapp.ui.utli.toFormatDate
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -56,17 +56,25 @@ class TaskFragment : Fragment() {
         initSpinner()
 
         arguments?.takeIf { it.containsKey(KEY_ARGS_TASK) }?.apply {
-            viewModel.setTodo((getParcelable(KEY_ARGS_TASK) as TodoItem?))
+            getString(KEY_ARGS_TASK)?.let { viewModel.getTodoItem(it) }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.todoItemState.collectLatest { todoItemNull ->
+            viewModel.loadingStatus.collect {
+                binding.loadingView.isVisible = it
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.todoItemState.collect { todoItemNull ->
                 todoItemNull?.let { todoItem ->
                     changeUi(todoItem)
                 }
             }
+        }
 
-            viewModel.deadline.collectLatest {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.deadline.collect {
                 binding.deadlineDate.text = it.toFormatDate()
             }
         }
@@ -99,7 +107,7 @@ class TaskFragment : Fragment() {
             binding.deadlineCalendar.isVisible = isChecked
 
             if (isChecked) {
-                if (binding.deadlineDate.text == "") {
+                if (viewModel.deadline.value == null) {
                     viewModel.setDeadline(binding.deadlineCalendar.date)
                 }
             } else {
@@ -176,9 +184,9 @@ class TaskFragment : Fragment() {
 
         private const val KEY_ARGS_TASK = "args"
 
-        fun getNewInstance(task: TodoItem?): TaskFragment = TaskFragment().apply {
+        fun getNewInstance(taskId: String?): TaskFragment = TaskFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(KEY_ARGS_TASK, task)
+                putString(KEY_ARGS_TASK, taskId)
             }
         }
     }

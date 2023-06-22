@@ -2,7 +2,7 @@ package com.template.todoapp.ui.main_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.entity.TodoItem
 import com.template.todoapp.domain.usecase.DeleteTodoUseCase
 import com.template.todoapp.domain.usecase.GetTodoListUseCase
 import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
 
     fun deleteTodo(todoItem: TodoItem) {
         viewModelScope.launch {
-            deleteTodoUseCase(todoItem)
+            deleteTodoUseCase(todoItem.id)
         }
     }
 

@@ -2,10 +2,7 @@ package com.template.todoapp.ui.main_screen.adapter
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.util.Half.toFloat
 import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -13,7 +10,6 @@ import androidx.core.view.marginRight
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.template.todoapp.R
-import com.template.todoapp.domain.TodoItem
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 

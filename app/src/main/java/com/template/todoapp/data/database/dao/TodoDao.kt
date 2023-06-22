@@ -2,8 +2,7 @@ package com.template.todoapp.data.database.dao
 
 import androidx.room.*
 import com.template.todoapp.data.database.entity.TodoItemEntity
-import com.template.todoapp.domain.Importance
-import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.entity.Importance
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,6 +17,8 @@ interface TodoDao {
     @Query("delete from todoItem where todo_id = :id")
     suspend fun deleteTodoItem(id: String)
 
+    @Query("select * from todoItem where todo_id = :id limit 1")
+    suspend fun getTodoItem(id: String): TodoItemEntity
 
     /*
     * @PrimaryKey(autoGenerate = true)

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,7 +19,7 @@ import com.template.todoapp.R
 import com.template.todoapp.app.appComponent
 import com.template.todoapp.databinding.FragmentMainBinding
 import com.template.todoapp.di.viewmodels.ViewModelFactory
-import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.entity.TodoItem
 import com.template.todoapp.ui.main_screen.adapter.TaskListAdapter
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
 import com.template.todoapp.ui.task_screen.TaskFragment
@@ -167,13 +166,13 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     }
 
     private fun adapterInfoHandler(todoItem: TodoItem) {
-        openSetupTaskScreen(todoItem)
+        openSetupTaskScreen(todoItem.id)
     }
 
-    private fun openSetupTaskScreen(todo: TodoItem?) {
+    private fun openSetupTaskScreen(todoId: String?) {
         requireActivity().supportFragmentManager.beginTransaction()
             .setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
-            .add(R.id.main_fragment_container_view, TaskFragment.getNewInstance(todo))
+            .add(R.id.main_fragment_container_view, TaskFragment.getNewInstance(todoId))
             .addToBackStack(null)
             .commit()
     }

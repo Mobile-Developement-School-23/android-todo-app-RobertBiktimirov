@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.template.todoapp.R
 import com.template.todoapp.databinding.ItemTaskListBinding
-import com.template.todoapp.domain.Importance
-import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.entity.Importance
+import com.template.todoapp.domain.entity.TodoItem
 import com.template.todoapp.ui.utli.toFormatDate
 
 class TaskListAdapter(

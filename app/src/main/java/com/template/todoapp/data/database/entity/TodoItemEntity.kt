@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.template.todoapp.data.database.converter.ImportanceConverter
-import com.template.todoapp.domain.Importance
+import com.template.todoapp.domain.entity.Importance
 
 @Entity(tableName = "todoItem")
 data class TodoItemEntity(

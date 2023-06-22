@@ -1,7 +1,7 @@
 package com.template.todoapp.data.mappers
 
 import com.template.todoapp.data.database.entity.TodoItemEntity
-import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.entity.TodoItem
 
 fun TodoItem.toEntity() = TodoItemEntity(
     id = id,

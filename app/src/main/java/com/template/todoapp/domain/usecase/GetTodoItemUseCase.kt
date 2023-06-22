@@ -2,12 +2,14 @@ package com.template.todoapp.domain.usecase
 
 import com.template.todoapp.domain.entity.TodoItem
 import com.template.todoapp.domain.repository.TodoItemRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetTodoListUseCase @Inject constructor(
+class GetTodoItemUseCase @Inject constructor(
     private val repository: TodoItemRepository
 ) {
 
-    operator fun invoke(): Flow<List<TodoItem>> = repository.getTodoList()
+    suspend operator fun invoke(id: String): TodoItem {
+        return repository.getTodoItem(id)
+    }
+
 }

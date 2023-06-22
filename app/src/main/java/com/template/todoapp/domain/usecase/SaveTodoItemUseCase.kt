@@ -1,6 +1,6 @@
 package com.template.todoapp.domain.usecase
 
-import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.entity.TodoItem
 import com.template.todoapp.domain.repository.TodoItemRepository
 import javax.inject.Inject
 

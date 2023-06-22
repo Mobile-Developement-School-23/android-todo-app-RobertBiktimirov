@@ -1,17 +1,13 @@
 package com.template.todoapp.data
 
-import com.template.todoapp.data.database.AppDatabase
 import com.template.todoapp.data.database.dao.TodoDao
 import com.template.todoapp.data.mappers.toEntity
 import com.template.todoapp.data.mappers.toUi
-import com.template.todoapp.domain.Importance
-import com.template.todoapp.domain.TodoItem
+import com.template.todoapp.domain.entity.TodoItem
 import com.template.todoapp.domain.repository.TodoItemRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlin.random.Random
 
 class TodoItemRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao
@@ -25,8 +21,8 @@ class TodoItemRepositoryImpl @Inject constructor(
         return todoDao.saveTodoItem(todoItem.toEntity())
     }
 
-    override suspend fun deleteTodoItem(todoItem: TodoItem) {
-        return todoDao.deleteTodoItem(todoItem.toEntity().id)
+    override suspend fun deleteTodoItem(id: String) {
+        return todoDao.deleteTodoItem(id)
     }
 
     override suspend fun updateTodoItem(todoItem: TodoItem) {
@@ -39,5 +35,9 @@ class TodoItemRepositoryImpl @Inject constructor(
             entity.dateOfCreating,
             entity.id
         )
+    }
+
+    override suspend fun getTodoItem(id: String): TodoItem {
+        return todoDao.getTodoItem(id).toUi()
     }
 }
