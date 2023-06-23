@@ -14,3 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ToDo App"
 include ':app'
+include ':task_feature'
+include ':api'
+include ':database'
+include ':common'
