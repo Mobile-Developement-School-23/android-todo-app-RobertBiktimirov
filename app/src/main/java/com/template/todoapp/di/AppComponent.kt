@@ -1,24 +1,22 @@
 package com.template.todoapp.di
 
 import android.content.Context
-import com.template.todoapp.app.TodoApplication
+import com.template.database.AppDatabase
+import com.template.task_feature.di.deps.TaskDeps
 import com.template.todoapp.ui.MainActivity
-import com.template.todoapp.ui.main_screen.MainFragment
-import com.template.todoapp.ui.task_screen.TaskFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [AppModule::class, ViewModelModule::class]
+    modules = [AppModule::class]
 )
-interface AppComponent {
+interface AppComponent : TaskDeps {
 
-    fun inject(mainFragment: MainFragment)
-    fun inject(taskFragment: TaskFragment)
+    override val database: AppDatabase
+
     fun inject(mainActivity: MainActivity)
-
 
     @Component.Builder
     interface Builder {
@@ -27,5 +25,4 @@ interface AppComponent {
 
         fun build(): AppComponent
     }
-
 }

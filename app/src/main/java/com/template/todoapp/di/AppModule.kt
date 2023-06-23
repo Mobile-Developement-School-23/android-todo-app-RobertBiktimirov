@@ -1,16 +1,13 @@
 package com.template.todoapp.di
 
 import android.content.Context
-import com.template.todoapp.data.TodoItemRepositoryImpl
-import com.template.todoapp.data.database.AppDatabase
-import com.template.todoapp.data.database.dao.TodoDao
-import com.template.todoapp.domain.repository.TodoItemRepository
-import dagger.Binds
+import com.template.database.AppDatabase
+import com.template.database.dao.TodoDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(includes = [AppModule.BindModule::class])
+@Module
 class AppModule {
 
     @Singleton
@@ -24,12 +21,4 @@ class AppModule {
     fun provideTodoDao(appDatabase: AppDatabase): TodoDao {
         return appDatabase.todoDao()
     }
-
-    @Module
-    interface BindModule {
-
-        @Binds
-        fun bindTodoItemRepository(impl: TodoItemRepositoryImpl): TodoItemRepository
-    }
-
 }
