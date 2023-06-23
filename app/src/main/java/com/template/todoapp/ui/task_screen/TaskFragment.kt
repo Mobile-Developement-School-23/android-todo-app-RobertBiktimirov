@@ -2,7 +2,6 @@ package com.template.todoapp.ui.task_screen
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -159,8 +158,8 @@ class TaskFragment : Fragment() {
             editTextTask.setText(todoItem.text)
             viewModel.setTaskText(todoItem.text)
             when (todoItem.importance) {
-                Importance.LOW -> binding.importanceSpinner.setSelection(0)
-                Importance.REGULAR -> binding.importanceSpinner.setSelection(1)
+                Importance.REGULAR -> binding.importanceSpinner.setSelection(0)
+                Importance.LOW -> binding.importanceSpinner.setSelection(1)
                 Importance.URGENT -> binding.importanceSpinner.setSelection(2)
             }
 
