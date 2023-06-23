@@ -26,7 +26,7 @@ class TaskListTouchHelper(
     private val deleteColor = ContextCompat.getColor(context, R.color.red).toDrawable()
     private val doneColor = ContextCompat.getColor(context, R.color.green_light_theme).toDrawable()
 
-    var isSwipeInProgress: Boolean by Delegates.notNull()
+    private var isSwipeInProgress: Boolean by Delegates.notNull()
 
     private val width = 72.dp
 

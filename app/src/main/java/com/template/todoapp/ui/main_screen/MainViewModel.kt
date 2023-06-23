@@ -49,6 +49,4 @@ class MainViewModel @Inject constructor(
             deleteTodoUseCase(todoItem.id)
         }
     }
-
-
 }

@@ -87,6 +87,10 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    fun closeTheScreen(){
+        _closeScreen.tryEmit(true)
+    }
+
     private suspend fun saveOrUpdateTask(importance: Importance, dateOfCreating: Long) {
 
         if (taskText.value.isNotEmpty()) {
@@ -102,7 +106,7 @@ class TaskViewModel @Inject constructor(
                         null
                     )
                 )
-                _closeScreen.tryEmit(true)
+                _closeScreen.emit(true)
             } else {
                 todoItemState.value?.let {
                     updateTodoListUseCase(
@@ -118,12 +122,13 @@ class TaskViewModel @Inject constructor(
                     )
                 }
 
-                _closeScreen.tryEmit(true)
+                _closeScreen.emit(true)
             }
         } else {
-            _nullErrorText.tryEmit(true)
+            _nullErrorText.emit(true)
         }
     }
+
 
     private fun generateTodoId() =
         "${taskText.value.hashCode()} - ${Calendar.getInstance().timeInMillis}"

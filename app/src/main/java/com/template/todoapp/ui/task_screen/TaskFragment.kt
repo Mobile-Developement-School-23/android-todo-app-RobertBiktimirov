@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -95,6 +96,7 @@ class TaskFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.closeScreen.collect {
                 if (it) {
+                    hideKeyboard()
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
@@ -132,7 +134,7 @@ class TaskFragment : Fragment() {
         }
 
         binding.closeButton.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            viewModel.closeTheScreen()
         }
 
         binding.deadlineCalendar.setOnDateChangeListener { _, year, month, dayOfMonth ->
@@ -171,6 +173,15 @@ class TaskFragment : Fragment() {
                 deadlineCalendar.date = todoItem.deadline
             }
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(
+            binding.editTextTask.windowToken,
+            0
+        )
     }
 
     override fun onDestroyView() {
