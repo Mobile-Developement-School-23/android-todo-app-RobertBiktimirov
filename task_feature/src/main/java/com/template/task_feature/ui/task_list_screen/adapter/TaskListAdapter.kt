@@ -1,4 +1,4 @@
-package com.template.task_feature.ui.main_screen.adapter
+package com.template.task_feature.ui.task_list_screen.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList

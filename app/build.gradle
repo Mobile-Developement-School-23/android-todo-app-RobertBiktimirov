@@ -17,6 +17,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [YANDEX_CLIENT_ID:"688a319db1de41ccb0dbe05469a22902"]
     }
 
     buildTypes {
@@ -58,6 +60,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    // datastore-preferences
+    implementation "androidx.datastore:datastore-preferences:1.1.0-alpha04"
+
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
 
     // room
@@ -82,4 +87,6 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0"
     implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
+
+    implementation "com.yandex.android:authsdk:2.5.1"
 }

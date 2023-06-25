@@ -1,5 +1,6 @@
 package com.template.todoapp.data.mappers
 
+import com.template.api.entity.TodoItemApi
 import com.template.database.entity.ImportanceDto
 import com.template.database.entity.TodoItemEntity
 import com.template.task_feature.domain.entity.Importance
@@ -32,4 +33,25 @@ fun TodoItemEntity.toUi() = TodoItem(
     id, text, importance.toUi(), deadline, flag, dateOfCreating
 )
 
+@JvmName("toUiTodoItemEntity")
 fun List<TodoItemEntity>.toUi() = this.map { it.toUi() }
+
+fun String.toImportance(): Importance = when (this) {
+    "low" -> Importance.LOW
+    "basic" -> Importance.REGULAR
+    "important" -> Importance.URGENT
+    else -> throw RuntimeException()
+}
+
+fun TodoItemApi.toUi(): TodoItem = TodoItem(
+    id,
+    text,
+    importance.toImportance(),
+    deadline,
+    done,
+    createdAt,
+    changedAt
+)
+
+@JvmName("toUiTodoItemApi")
+fun List<TodoItemApi>.toUi() = this.map { it.toUi() }

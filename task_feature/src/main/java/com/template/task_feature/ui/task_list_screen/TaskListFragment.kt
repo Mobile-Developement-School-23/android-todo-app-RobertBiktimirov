@@ -1,4 +1,4 @@
-package com.template.task_feature.ui.main_screen
+package com.template.task_feature.ui.task_list_screen
 
 import android.content.Context
 import android.os.Bundle
@@ -17,15 +17,15 @@ import com.template.task_feature.databinding.FragmentMainBinding
 import com.template.task_feature.di.TaskComponentViewModel
 import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.TodoItem
-import com.template.task_feature.ui.main_screen.adapter.TaskListAdapter
+import com.template.task_feature.ui.task_list_screen.adapter.TaskListAdapter
 import com.template.task_feature.ui.task_navigation.TaskNavigation
-import com.template.todoapp.ui.main_screen.MainViewModel
+import com.template.todoapp.ui.main_screen.TaskListViewModel
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
+class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("binding not must be null")
@@ -36,7 +36,7 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+        ViewModelProvider(this, viewModelFactory)[TaskListViewModel::class.java]
     }
 
 

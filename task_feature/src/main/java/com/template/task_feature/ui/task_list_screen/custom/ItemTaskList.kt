@@ -1,4 +1,4 @@
-package com.template.task_feature.ui.main_screen.custom
+package com.template.task_feature.ui.task_list_screen.custom
 
 import android.content.Context
 import android.util.AttributeSet

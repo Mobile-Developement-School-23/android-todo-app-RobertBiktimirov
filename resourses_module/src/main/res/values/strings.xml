@@ -23,4 +23,7 @@
         <item>!! Высокий</item>
     </array>
 
+    <string name="name_shared_preference">shared_preference_yandex_token</string>
+    <string name="key_sp_token">tokenName</string>
+
 </resources>

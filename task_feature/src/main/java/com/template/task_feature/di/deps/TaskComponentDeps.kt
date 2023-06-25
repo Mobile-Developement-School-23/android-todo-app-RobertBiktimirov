@@ -1,12 +1,14 @@
 package com.template.task_feature.di.deps
 
 import androidx.annotation.RestrictTo
+import com.template.api.services.TodoService
 import com.template.database.AppDatabase
 import kotlin.properties.Delegates.notNull
 
 interface TaskDeps {
 
     val database: AppDatabase
+    val todoService: TodoService
 }
 
 
