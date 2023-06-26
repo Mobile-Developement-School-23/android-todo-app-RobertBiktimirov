@@ -1,10 +1,12 @@
-package com.template.todoapp.data.mappers
+package com.template.task_feature.data.mappers
 
+import com.template.api.entity.TodoBody
 import com.template.api.entity.TodoItemApi
 import com.template.database.entity.ImportanceDto
 import com.template.database.entity.TodoItemEntity
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
+import java.time.Instant
 
 
 fun ImportanceDto.toUi(): Importance = when (this) {
@@ -19,6 +21,30 @@ fun Importance.toDto(): ImportanceDto = when (this) {
     Importance.URGENT -> ImportanceDto.URGENT
 }
 
+fun Importance.toBody(): String = when (this) {
+    Importance.LOW -> "low"
+    Importance.REGULAR -> "basic"
+    Importance.URGENT -> "important"
+}
+
+
+
+fun TodoItem.toBody(): TodoBody {
+    val todoItemApi = TodoItemApi(
+        id = id,
+        text = text,
+        importance = importance.toBody(),
+        deadline = deadline?.div(1000),
+        done = isCompleted,
+        color = color,
+        createdAt = dateOfCreating.div(1000),
+        changedAt = dateOfEditing?.div(1000) ?: dateOfCreating.div(1000),
+        lastUpdateBy = "cf1"
+    )
+
+    return TodoBody(todoItemApi)
+}
+
 fun TodoItem.toEntity() = TodoItemEntity(
     id = id,
     text = text,
@@ -30,7 +56,7 @@ fun TodoItem.toEntity() = TodoItemEntity(
 )
 
 fun TodoItemEntity.toUi() = TodoItem(
-    id, text, importance.toUi(), deadline, flag, dateOfCreating
+    id, text, importance.toUi(), deadline, flag, color, dateOfCreating
 )
 
 @JvmName("toUiTodoItemEntity")
@@ -49,6 +75,7 @@ fun TodoItemApi.toUi(): TodoItem = TodoItem(
     importance.toImportance(),
     deadline,
     done,
+    color,
     createdAt,
     changedAt
 )

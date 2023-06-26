@@ -21,7 +21,6 @@ import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_navigation.TaskNavigation
-import com.template.todoapp.ui.task_screen.TaskViewModel
 import com.template.todoapp.ui.task_screen.spinner_adapter.SpinnerAdapter
 import kotlinx.coroutines.launch
 import java.util.*

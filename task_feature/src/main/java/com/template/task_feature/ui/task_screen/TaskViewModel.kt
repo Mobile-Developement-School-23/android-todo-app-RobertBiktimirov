@@ -1,14 +1,14 @@
-package com.template.todoapp.ui.task_screen
+package com.template.task_feature.ui.task_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.template.common.utli.runCatchingNonCancellation
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.todoapp.domain.usecase.DeleteTodoUseCase
 import com.template.todoapp.domain.usecase.GetTodoItemUseCase
 import com.template.todoapp.domain.usecase.SaveTodoItemUseCase
 import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
-import com.template.common.utli.runCatchingNonCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -102,6 +102,7 @@ class TaskViewModel @Inject constructor(
                         importance,
                         deadline.value,
                         false,
+                        "#000000",
                         dateOfCreating,
                         null
                     )
@@ -116,6 +117,7 @@ class TaskViewModel @Inject constructor(
                             importance,
                             deadline.value,
                             it.isCompleted,
+                            "#000000",
                             it.dateOfCreating,
                             Calendar.getInstance().timeInMillis
                         )

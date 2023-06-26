@@ -13,6 +13,7 @@ data class TodoItem(
     val importance: Importance,
     val deadline: Long?,
     var isCompleted: Boolean = false,
+    var color: String? = null,
     val dateOfCreating: Long,
     var dateOfEditing: Long? = null
 )

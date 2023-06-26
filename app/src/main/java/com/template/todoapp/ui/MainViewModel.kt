@@ -15,15 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
-
-
-    fun saveToken(token: String) {
-        viewModelScope.launch {
-            
-        }
-    }
 
     companion object {
         private const val NAME_DATA_TOKEN = "tokenSaveName"

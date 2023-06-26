@@ -23,6 +23,7 @@ data class TodoItemEntity(
     @ColumnInfo("importance") val importance: ImportanceDto,
     @ColumnInfo("deadline") val deadline: Long?,
     @ColumnInfo("flag") var flag: Boolean,
+    @ColumnInfo("color") var color: String? = null,
     @ColumnInfo("dateOfCreating") val dateOfCreating: Long,
     @ColumnInfo("dateOfEditing") var dateOfEditing: Long?
 )

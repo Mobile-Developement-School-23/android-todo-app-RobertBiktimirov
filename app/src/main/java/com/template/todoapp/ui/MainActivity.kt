@@ -21,10 +21,6 @@ import com.template.todoapp.R as mainR
 
 class MainActivity : AppCompatActivity(), TaskNavigation {
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
-    }
-
     private val sharedPreferences by lazy {
         getSharedPreferences(
             getString(resR.string.name_shared_preference),
@@ -37,9 +33,7 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         appComponent.inject(this)
         setContentView(mainR.layout.activity_main)
 
-
-
-        if (getToken() == null){
+        if (getToken() == null) {
             val yandexSdk = YandexAuthSdk(this, YandexAuthOptions(this))
 
             val loginOptionsBuilder = YandexAuthLoginOptions.Builder()
@@ -50,20 +44,11 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
                     val yandexAuthToken = yandexSdk.extractToken(it.resultCode, it.data)
                     if (yandexAuthToken != null) {
                         saveToken(yandexAuthToken.value)
-
-                        supportFragmentManager.beginTransaction()
-                            .add(mainR.id.main_fragment_container_view, TaskListFragment())
-                            .commit()
                     }
                 }
             }.launch(intent)
         } else {
-
-            ApiTokenProvider.token = getToken() ?: throw RuntimeException("")
-
-            supportFragmentManager.beginTransaction()
-                .add(mainR.id.main_fragment_container_view, TaskListFragment())
-                .commit()
+            setToken(getToken() ?: throw RuntimeException(""))
         }
 
 
@@ -78,7 +63,15 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
             apply()
         }
 
+        setToken(token)
+    }
+
+    private fun setToken(token: String) {
         ApiTokenProvider.token = token
+
+        supportFragmentManager.beginTransaction()
+            .add(mainR.id.main_fragment_container_view, TaskListFragment())
+            .commit()
     }
 
     private fun getToken(): String? =
@@ -99,9 +92,5 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
             .add(mainR.id.main_fragment_container_view, TaskFragment.getNewInstance(todoId))
             .addToBackStack(null)
             .commit()
-    }
-
-
-    companion object {
     }
 }
