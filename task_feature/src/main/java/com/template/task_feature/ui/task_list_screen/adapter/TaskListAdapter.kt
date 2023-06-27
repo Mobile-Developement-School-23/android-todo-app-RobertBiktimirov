@@ -13,7 +13,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.template.common.utli.toFormatDate
+import com.template.common.utli.timestampToFormattedDate
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.ItemTaskListBinding
 import com.template.task_feature.domain.entity.Importance
@@ -39,10 +39,16 @@ class TaskListAdapter(
             with(binding) {
 
                 titleTask.text = todoItem.text
-                dataTask.text = todoItem.deadline.toFormatDate()
+                dataTask.text = todoItem.deadline.timestampToFormattedDate()
                 dataTask.isVisible = todoItem.deadline != null
                 isChooseBoxTask.isChecked = todoItem.isCompleted
                 setupDisplayTaskText(this@TaskViewHolder, false)
+
+
+                binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
+                    onChooseClickListener(getItem(adapterPosition).copy(isCompleted = isChecked))
+                    setupDisplayTaskText(this@TaskViewHolder, isChecked)
+                }
 
                 when (todoItem.importance) {
                     Importance.URGENT -> {
@@ -101,11 +107,6 @@ class TaskListAdapter(
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemTaskListBinding.inflate(inflater)
         val holder = TaskViewHolder(binding, parent.context)
-
-        holder.binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
-            onChooseClickListener(getItem(holder.adapterPosition).copy(isCompleted = isChecked))
-            setupDisplayTaskText(holder, isChecked)
-        }
 
         holder.binding.bodyTask.setOnClickListener {
             onInfoClickListener(getItem(holder.adapterPosition))

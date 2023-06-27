@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
-import com.template.common.utli.toFormatDate
+import com.template.common.utli.timestampToFormattedDate
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.FragmentTaskBinding
 import com.template.task_feature.di.TaskComponentViewModel
@@ -84,7 +84,7 @@ class TaskFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.deadline.collect {
-                binding.deadlineDate.text = it.toFormatDate()
+                binding.deadlineDate.text = it.timestampToFormattedDate()
             }
         }
 
@@ -127,7 +127,6 @@ class TaskFragment : Fragment() {
 
         binding.deleteButton.setOnClickListener {
             viewModel.deleteTodo()
-            navigation?.onBack()
         }
 
         binding.saveTask.setOnClickListener {

@@ -76,7 +76,11 @@ fun TodoItemEntity.toUi() = TodoItem(
 )
 
 @JvmName("toUiTodoItemEntity")
-fun List<TodoItemEntity>.toUi(): TodoShell = TodoShell(true, this.map { it.toUi() })
+fun List<TodoItemEntity>.toUi(): TodoShell = TodoShell(
+    true,
+    isError = false,
+    todoItem = this.map { it.toUi() }
+)
 
 fun String.toImportance(): Importance = when (this) {
     "low" -> Importance.LOW
@@ -97,4 +101,8 @@ fun TodoItemApi.toUi(): TodoItem = TodoItem(
 )
 
 @JvmName("toUiTodoItemApi")
-fun List<TodoItemApi>.toUi(): TodoShell = TodoShell(false, this.map { it.toUi() })
+fun List<TodoItemApi>.toUi(): TodoShell = TodoShell(
+    false,
+    isError = false,
+    todoItem = this.map { it.toUi() }
+)

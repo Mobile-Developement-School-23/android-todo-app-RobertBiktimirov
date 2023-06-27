@@ -3,25 +3,19 @@ package com.template.task_feature.data.repository
 import android.util.Log
 import com.template.task_feature.data.sources.api.ApiSource
 import com.template.task_feature.data.sources.database.DatabaseSource
-import com.template.task_feature.data.sources.revision.RevisionProvider
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.entity.TodoShell
 import com.template.task_feature.domain.repository.TodoItemRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class TodoItemRepositoryImpl @Inject constructor(
     private val apiSource: ApiSource,
     private val databaseSource: DatabaseSource,
-    private val revisionProvider: RevisionProvider
 ) : TodoItemRepository {
-
-    private var revision = revisionProvider.spRevision
-        set(value) {
-            revisionProvider.spRevision = value
-            field = value
-        }
 
     override fun getTodoList(): Flow<TodoShell> {
         return flow {

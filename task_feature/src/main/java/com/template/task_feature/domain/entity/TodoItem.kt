@@ -20,10 +20,13 @@ data class TodoItem(
 
 data class TodoShell(
     val isCache: Boolean,
+    val isError: Boolean,
     val todoItem: List<TodoItem>
 ) {
     companion object {
-        fun toEmpty() = TodoShell(true, emptyList())
+        fun toEmpty() = TodoShell(isCache = true, isError = false, todoItem = emptyList())
+
+        fun toError() = TodoShell(isCache = false, isError = true, todoItem = emptyList())
     }
 
 }

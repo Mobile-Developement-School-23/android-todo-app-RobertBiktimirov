@@ -21,6 +21,7 @@ import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_list_screen.adapter.TaskListAdapter
 import com.template.task_feature.ui.task_navigation.TaskNavigation
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -74,15 +75,13 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.todoList.collect {
-
+                viewModel.todoList.collectIndexed { index, it ->
                     Log.d("api test save todoItem", it.toString())
-
                     viewModel.setIsEmptyList(it.todoItem.isEmpty())
                     taskListAdapter.submitList(it.todoItem)
                     setCountDoneTask(it.todoItem)
 
-                    binding.myTaskTitle.text = if (it.isCache) {
+                    binding.myTaskTitle.text = if (index == 1) {
                         getString(R.string.title_update)
                     } else {
                         getString(R.string.my_tasks)

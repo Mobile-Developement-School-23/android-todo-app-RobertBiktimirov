@@ -45,6 +45,9 @@ class ApiSourceImpl @Inject constructor(
                 todoItem.toBody(),
                 revisionProvider.spRevision
             )
+
+            revisionProvider.spRevision += 1
+
             if (apiAnswer.status == "ok") {
                 return apiAnswer.todoItem.toUi()
             }
@@ -57,7 +60,7 @@ class ApiSourceImpl @Inject constructor(
     override suspend fun deleteTodoApi(todoId: String): Boolean {
         runCatchingNonCancellation {
             val apiAnswer = todoService.deleteTodoItem(todoId, revisionProvider.spRevision)
-
+            revisionProvider.spRevision += 1
             if (apiAnswer.todoItem.id == todoId) {
                 return true
             }
