@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ToDo App</string>
     <string name="my_tasks">Мои дела</string>
+    <string name="title_update">Обновляется…</string>
     <string name="done_task">Выполнено - %s</string>
     <string name="isvisible">isVisible</string>
     <string name="fab_add_task">floating_action_button_for_add_task</string>
@@ -23,7 +24,11 @@
         <item>!! Высокий</item>
     </array>
 
-    <string name="name_shared_preference">shared_preference_yandex_token</string>
+    <string name="name_toke_shared_preference">shared_preference_yandex_token</string>
     <string name="key_sp_token">tokenName</string>
+
+    <string name="name_revision_shared_preference">shared_preference_revision_api</string>
+    <string name="key_sp_revision">revision_api</string>
+
 
 </resources>

@@ -6,7 +6,7 @@ import com.template.common.utli.runCatchingNonCancellation
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.todoapp.domain.usecase.DeleteTodoUseCase
-import com.template.todoapp.domain.usecase.GetTodoItemUseCase
+import com.template.task_feature.domain.usecase.GetTodoItemUseCase
 import com.template.todoapp.domain.usecase.SaveTodoItemUseCase
 import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

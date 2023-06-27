@@ -1,17 +1,16 @@
-package com.template.todoapp.ui.main_screen
+package com.template.task_feature.ui.task_list_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.todoapp.domain.usecase.DeleteTodoUseCase
-import com.template.todoapp.domain.usecase.GetTodoListUseCase
+import com.template.task_feature.domain.usecase.GetTodoListUseCase
 import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.template.common.utli.runCatchingNonCancellation
+import com.template.task_feature.domain.entity.TodoShell
+import kotlinx.coroutines.flow.*
 
 class TaskListViewModel @Inject constructor(
     getTodoListUseCase: GetTodoListUseCase,
@@ -26,7 +25,7 @@ class TaskListViewModel @Inject constructor(
         }
 
     val todoList = getTodoListUseCase()
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        .stateIn(viewModelScope, SharingStarted.Lazily, TodoShell.toEmpty())
 
     private val _isVisibleDoneTask: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isVisibleDoneTask get() = _isVisibleDoneTask.asStateFlow()
@@ -40,13 +39,17 @@ class TaskListViewModel @Inject constructor(
 
     fun updateTodo(todoItem: TodoItem) {
         viewModelScope.launch {
-            updateTodoListUseCase(todoItem)
+            runCatchingNonCancellation {
+                updateTodoListUseCase(todoItem)
+            }
         }
     }
 
     fun deleteTodo(todoItem: TodoItem) {
         viewModelScope.launch {
-            deleteTodoUseCase(todoItem.id)
+            runCatchingNonCancellation {
+                deleteTodoUseCase(todoItem.id)
+            }
         }
     }
 }

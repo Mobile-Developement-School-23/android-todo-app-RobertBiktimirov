@@ -4,6 +4,7 @@ import com.template.api.entity.TodoBody
 import com.template.api.entity.TodoListResponse
 import com.template.api.entity.TodoResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -31,8 +32,15 @@ interface TodoService {
 
     @PUT("list/{id}")
     suspend fun editTodoItem(
-        @Path("id") todoId: String
-    )
+        @Path("id") todoId: String,
+        @Body todoBody: TodoBody,
+        @Header("X-Last-Known-Revision") revision: Int
+    ): TodoResponse
 
+    @DELETE("list/{id}")
+    suspend fun deleteTodoItem(
+        @Path("id") todoId: String,
+        @Header("X-Last-Known-Revision") revision: Int
+    ): TodoResponse
 
 }

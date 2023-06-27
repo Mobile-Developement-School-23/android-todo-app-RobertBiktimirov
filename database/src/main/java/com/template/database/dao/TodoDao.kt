@@ -9,10 +9,16 @@ import kotlinx.coroutines.flow.Flow
 interface TodoDao {
 
     @Query("select * from todoItem")
-    fun getTodoItems(): Flow<List<TodoItemEntity>>
+    suspend fun getTodoItems(): List<TodoItemEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveTodoItem(todoItemEntity: TodoItemEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveTodoList(list: List<TodoItemEntity>)
+
+    @Query("delete from todoItem")
+    suspend fun deleteAll()
 
     @Query("delete from todoItem where todo_id = :id")
     suspend fun deleteTodoItem(id: String)
@@ -29,9 +35,9 @@ interface TodoDao {
         text: String,
         importance: ImportanceDto,
         deadline: Long?,
-        flag: Int,
+        flag: Boolean,
         dateOfEditing: Long?,
-        id: String
+        id: String,
     )
 
 }

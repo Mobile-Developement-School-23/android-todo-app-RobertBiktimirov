@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.dataStoreFile
-import androidx.lifecycle.ViewModelProvider
 import com.template.api.ApiTokenProvider
 import com.template.task_feature.ui.task_list_screen.TaskListFragment
 import com.template.task_feature.ui.task_navigation.TaskNavigation
@@ -23,7 +21,7 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
 
     private val sharedPreferences by lazy {
         getSharedPreferences(
-            getString(resR.string.name_shared_preference),
+            getString(resR.string.name_toke_shared_preference),
             Context.MODE_PRIVATE
         )
     }

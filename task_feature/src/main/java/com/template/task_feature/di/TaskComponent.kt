@@ -15,7 +15,6 @@ import javax.inject.Scope
 internal interface TaskComponent {
 
     fun inject(taskListFragment: TaskListFragment)
-
     fun inject(taskFragment: TaskFragment)
 
     @Component.Builder

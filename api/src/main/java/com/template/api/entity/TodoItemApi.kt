@@ -29,7 +29,7 @@ data class TodoListResponse(
 data class TodoResponse(
     @SerialName("status") val status: String,
     @SerialName("element") val todoItem: TodoItemApi,
-    @SerialName("revision") val revision: Int
+    @SerialName("revision") var revision: Int = -1
 )
 
 

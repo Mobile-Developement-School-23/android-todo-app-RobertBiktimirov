@@ -17,6 +17,7 @@ interface AppComponent : TaskDeps {
 
     override val database: AppDatabase
     override val todoService: TodoService
+    override val context: Context
 
     fun inject(mainActivity: MainActivity)
 

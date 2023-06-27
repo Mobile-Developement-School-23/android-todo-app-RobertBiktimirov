@@ -1,5 +1,6 @@
 package com.template.task_feature.di.deps
 
+import android.content.Context
 import androidx.annotation.RestrictTo
 import com.template.api.services.TodoService
 import com.template.database.AppDatabase
@@ -9,6 +10,7 @@ interface TaskDeps {
 
     val database: AppDatabase
     val todoService: TodoService
+    val context: Context
 }
 
 

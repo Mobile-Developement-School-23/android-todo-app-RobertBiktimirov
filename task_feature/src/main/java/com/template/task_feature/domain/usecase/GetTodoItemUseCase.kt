@@ -1,4 +1,4 @@
-package com.template.todoapp.domain.usecase
+package com.template.task_feature.domain.usecase
 
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.repository.TodoItemRepository

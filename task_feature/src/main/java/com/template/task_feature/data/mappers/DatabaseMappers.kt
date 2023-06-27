@@ -6,6 +6,7 @@ import com.template.database.entity.ImportanceDto
 import com.template.database.entity.TodoItemEntity
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
+import com.template.task_feature.domain.entity.TodoShell
 import java.time.Instant
 
 
@@ -28,7 +29,6 @@ fun Importance.toBody(): String = when (this) {
 }
 
 
-
 fun TodoItem.toBody(): TodoBody {
     val todoItemApi = TodoItemApi(
         id = id,
@@ -45,6 +45,19 @@ fun TodoItem.toBody(): TodoBody {
     return TodoBody(todoItemApi)
 }
 
+fun TodoItemApi.toEntity() = TodoItemEntity(
+    id = id,
+    text = text,
+    importance = importance.toImportance().toDto(),
+    deadline = deadline,
+    flag = done,
+    color = color,
+    dateOfCreating = createdAt,
+    dateOfEditing = changedAt
+)
+
+fun List<TodoItemApi>.toEntity() = this.map { it.toEntity() }
+
 fun TodoItem.toEntity() = TodoItemEntity(
     id = id,
     text = text,
@@ -55,12 +68,15 @@ fun TodoItem.toEntity() = TodoItemEntity(
     dateOfEditing = dateOfEditing
 )
 
+@JvmName("toEntityTodoItemList")
+fun List<TodoItem>.toEntity() = map { it.toEntity() }
+
 fun TodoItemEntity.toUi() = TodoItem(
     id, text, importance.toUi(), deadline, flag, color, dateOfCreating
 )
 
 @JvmName("toUiTodoItemEntity")
-fun List<TodoItemEntity>.toUi() = this.map { it.toUi() }
+fun List<TodoItemEntity>.toUi(): TodoShell = TodoShell(true, this.map { it.toUi() })
 
 fun String.toImportance(): Importance = when (this) {
     "low" -> Importance.LOW
@@ -81,4 +97,4 @@ fun TodoItemApi.toUi(): TodoItem = TodoItem(
 )
 
 @JvmName("toUiTodoItemApi")
-fun List<TodoItemApi>.toUi() = this.map { it.toUi() }
+fun List<TodoItemApi>.toUi(): TodoShell = TodoShell(false, this.map { it.toUi() })

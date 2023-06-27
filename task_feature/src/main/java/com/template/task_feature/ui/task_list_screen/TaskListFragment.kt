@@ -2,6 +2,7 @@ package com.template.task_feature.ui.task_list_screen
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -19,7 +20,6 @@ import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_list_screen.adapter.TaskListAdapter
 import com.template.task_feature.ui.task_navigation.TaskNavigation
-import com.template.todoapp.ui.main_screen.TaskListViewModel
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -75,9 +75,18 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.todoList.collect {
-                    viewModel.setIsEmptyList(it.isEmpty())
-                    taskListAdapter.submitList(it)
-                    setCountDoneTask(it)
+
+                    Log.d("api test save todoItem", it.toString())
+
+                    viewModel.setIsEmptyList(it.todoItem.isEmpty())
+                    taskListAdapter.submitList(it.todoItem)
+                    setCountDoneTask(it.todoItem)
+
+                    binding.myTaskTitle.text = if (it.isCache) {
+                        getString(R.string.title_update)
+                    } else {
+                        getString(R.string.my_tasks)
+                    }
                 }
             }
         }
@@ -107,9 +116,9 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isVisibleDoneTask.collectLatest { flag ->
                     val listItemTodo: List<TodoItem> = if (flag) {
-                        viewModel.todoList.value.filter { item -> !item.isCompleted }
+                        viewModel.todoList.value.todoItem.filter { item -> !item.isCompleted }
                     } else {
-                        viewModel.todoList.value
+                        viewModel.todoList.value.todoItem
                     }
                     taskListAdapter.submitList(listItemTodo)
                 }

@@ -17,3 +17,13 @@ data class TodoItem(
     val dateOfCreating: Long,
     var dateOfEditing: Long? = null
 )
+
+data class TodoShell(
+    val isCache: Boolean,
+    val todoItem: List<TodoItem>
+) {
+    companion object {
+        fun toEmpty() = TodoShell(true, emptyList())
+    }
+
+}
