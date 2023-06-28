@@ -4,7 +4,8 @@ import android.content.Context
 import com.template.api.services.TodoService
 import com.template.database.AppDatabase
 import com.template.task_feature.di.deps.TaskDeps
-import com.template.todoapp.ui.MainActivity
+import com.template.todoapp.app.TodoApplication
+import com.template.todoapp.ui.main.MainActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -20,6 +21,7 @@ interface AppComponent : TaskDeps {
     override val context: Context
 
     fun inject(mainActivity: MainActivity)
+    fun inject(application: TodoApplication)
 
     @Component.Builder
     interface Builder {

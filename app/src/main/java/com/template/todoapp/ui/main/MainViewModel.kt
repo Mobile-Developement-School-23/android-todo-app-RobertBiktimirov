@@ -1,4 +1,4 @@
-package com.template.todoapp.ui
+package com.template.todoapp.ui.main
 
 import android.content.SharedPreferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory

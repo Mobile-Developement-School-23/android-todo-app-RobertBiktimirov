@@ -22,6 +22,7 @@ class TodoApplication : Application() {
             .context(this)
             .build()
 
+
         TaskDepsStore.deps = appComponent
 
     }
