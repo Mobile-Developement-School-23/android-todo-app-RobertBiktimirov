@@ -68,11 +68,6 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent" />
-
     <com.template.task_feature.ui.task_list_screen.custom.TaskRecyclerView
         android:background="@drawable/bg_main_rv"
         android:id="@+id/task_list"
