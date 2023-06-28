@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         appComponent.inject(this)
         setContentView(mainR.layout.activity_main)
 
-        yandexLauncher(yandexSignUpActivity.getYandexIntent()) {
+        yandexLauncher(yandexSignUpActivity.getYandexIntent(intent)) {
             yandexSignUpActivity.registerYandexSignUp(it) {
                 supportFragmentManager.beginTransaction()
                     .add(mainR.id.main_fragment_container_view, TaskListFragment())

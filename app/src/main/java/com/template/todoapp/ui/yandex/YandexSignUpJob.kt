@@ -19,11 +19,16 @@ class YandexSignUpJob @Inject constructor(
 
     private var yandexSdk: YandexAuthSdk by Delegates.notNull()
 
-    fun getYandexIntent(): Intent {
-        yandexSdk = YandexAuthSdk(context, YandexAuthOptions(context))
+    fun getYandexIntent(defaultIntent: Intent): Intent {
 
-        val loginOptionsBuilder = YandexAuthLoginOptions.Builder()
-        return yandexSdk.createLoginIntent(loginOptionsBuilder.build())
+        return if (token == null) {
+            yandexSdk = YandexAuthSdk(context, YandexAuthOptions(context))
+
+            val loginOptionsBuilder = YandexAuthLoginOptions.Builder()
+            yandexSdk.createLoginIntent(loginOptionsBuilder.build())
+        } else {
+            defaultIntent
+        }
     }
 
     fun registerYandexSignUp(it: ActivityResult, lambdaStartFragment: (() -> Unit)) {
