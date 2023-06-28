@@ -87,7 +87,7 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    fun closeTheScreen(){
+    fun closeTheScreen() {
         _closeScreen.tryEmit(true)
     }
 

@@ -18,15 +18,12 @@ class TodoItemRepositoryImpl @Inject constructor(
 ) : TodoItemRepository {
 
     override fun getTodoList(): Flow<TodoShell> {
-        return flow {
+        return databaseSource.getListTodoCache()
+    }
 
-            val databaseResponse = databaseSource.getListTodoCache()
-            emit(databaseResponse)
-
-            val apiResponse = apiSource.getListTodoApi() ?: throw RuntimeException()
-            databaseSource.saveInCacheTodoList(apiResponse.todoItem)
-            emit(apiResponse)
-        }
+    override suspend fun firstLoadTodoList() {
+        val apiResponse = apiSource.getListTodoApi() ?: throw RuntimeException()
+        databaseSource.saveInCacheTodoList(apiResponse.todoItem)
     }
 
     override suspend fun saveTodoItem(todoItem: TodoItem) {
@@ -36,7 +33,6 @@ class TodoItemRepositoryImpl @Inject constructor(
         } else {
             Log.d("error source database", "error save")
         }
-
     }
 
     override suspend fun deleteTodoItem(id: String) {

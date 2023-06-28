@@ -184,8 +184,8 @@ class TaskFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
         imm.hideSoftInputFromWindow(
             binding.editTextTask.windowToken,
             0

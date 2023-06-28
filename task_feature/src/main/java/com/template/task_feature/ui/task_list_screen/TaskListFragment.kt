@@ -81,7 +81,7 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
                     taskListAdapter.submitList(it.todoItem)
                     setCountDoneTask(it.todoItem)
 
-                    binding.myTaskTitle.text = if (index == 1) {
+                    binding.myTaskTitle.text = if (index == FIRST_LOAD_INDEX) {
                         getString(R.string.title_update)
                     } else {
                         getString(R.string.my_tasks)
@@ -200,6 +200,11 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
         taskListAdapter.mapTodoItem[position]?.isCompleted =
             !(taskListAdapter.mapTodoItem[position]?.isCompleted ?: false)
         taskListAdapter.notifyItemChanged(position)
+    }
+
+
+    companion object {
+        private const val FIRST_LOAD_INDEX = 1
     }
 
 }

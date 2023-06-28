@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.RestrictTo
 import com.template.api.services.TodoService
 import com.template.database.AppDatabase
+import com.template.task_feature.data.sources.revision.RevisionProvider
 import kotlin.properties.Delegates.notNull
 
 interface TaskDeps {
@@ -11,6 +12,7 @@ interface TaskDeps {
     val database: AppDatabase
     val todoService: TodoService
     val context: Context
+    val revisionProvider: RevisionProvider
 }
 
 

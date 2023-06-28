@@ -8,6 +8,8 @@ interface TodoItemRepository {
 
     fun getTodoList(): Flow<TodoShell>
 
+    suspend fun firstLoadTodoList()
+
     suspend fun saveTodoItem(todoItem: TodoItem)
 
     suspend fun deleteTodoItem(id: String)

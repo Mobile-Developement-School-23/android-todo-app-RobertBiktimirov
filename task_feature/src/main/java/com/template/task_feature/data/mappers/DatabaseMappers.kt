@@ -34,11 +34,11 @@ fun TodoItem.toBody(): TodoBody {
         id = id,
         text = text,
         importance = importance.toBody(),
-        deadline = deadline?.div(1000),
+        deadline = deadline,
         done = isCompleted,
         color = color,
-        createdAt = dateOfCreating.div(1000),
-        changedAt = dateOfEditing?.div(1000) ?: dateOfCreating.div(1000),
+        createdAt = dateOfCreating,
+        changedAt = dateOfEditing ?: dateOfCreating,
         lastUpdateBy = "cf1"
     )
 

@@ -16,8 +16,8 @@ class DatabaseSourceImpl @Inject constructor(
     private val todoDao: TodoDao
 ) : DatabaseSource {
 
-    override suspend fun getListTodoCache(): TodoShell {
-        return todoDao.getTodoItems().toUi()
+    override fun getListTodoCache(): Flow<TodoShell> {
+        return todoDao.getTodoItems().map { it.toUi() }
     }
 
     override suspend fun saveInCacheTodoItem(todoItem: TodoItem) {

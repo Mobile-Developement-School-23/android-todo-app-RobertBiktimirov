@@ -1,5 +1,6 @@
 package com.template.task_feature.ui.task_list_screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.template.task_feature.domain.entity.TodoItem
@@ -10,13 +11,28 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.template.common.utli.runCatchingNonCancellation
 import com.template.task_feature.domain.entity.TodoShell
+import com.template.task_feature.domain.usecase.LoadTodoListInDbUseCase
 import kotlinx.coroutines.flow.*
 
 class TaskListViewModel @Inject constructor(
     getTodoListUseCase: GetTodoListUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase,
-    private val updateTodoListUseCase: UpdateTodoListUseCase
+    private val updateTodoListUseCase: UpdateTodoListUseCase,
+    private val firstLoadTodoListUseCase: LoadTodoListInDbUseCase
 ) : ViewModel() {
+
+    private val _noInternet = MutableStateFlow(false)
+    val noInternet get() = _noInternet.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            runCatchingNonCancellation {
+                firstLoadTodoListUseCase()
+            }.getOrElse {
+                Log.d("no network and error", "not network :)")
+            }
+        }
+    }
 
     var isVisibleDone: Boolean = false
         set(value) {

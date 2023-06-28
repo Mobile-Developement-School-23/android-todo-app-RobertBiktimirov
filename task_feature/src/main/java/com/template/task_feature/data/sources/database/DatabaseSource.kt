@@ -5,7 +5,7 @@ import com.template.task_feature.domain.entity.TodoShell
 import kotlinx.coroutines.flow.Flow
 
 interface DatabaseSource {
-    suspend fun getListTodoCache(): TodoShell
+    fun getListTodoCache(): Flow<TodoShell>
     suspend fun saveInCacheTodoItem(todoItem: TodoItem)
     suspend fun saveInCacheTodoList(todoItems: List<TodoItem>)
     suspend fun editTodoCache(todoItem: TodoItem)
