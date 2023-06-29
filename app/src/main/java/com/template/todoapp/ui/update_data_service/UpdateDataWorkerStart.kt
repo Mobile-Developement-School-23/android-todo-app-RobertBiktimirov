@@ -8,16 +8,25 @@ import javax.inject.Inject
 class UpdateDataWorkerStart @Inject constructor(
     updateDataWorkerFactory: UpdateDataWorkerFactory,
     private val context: Context
-){
+) {
 
-    private val constraints = Constraints.Builder()
+    private val wifiConstraints = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.UNMETERED)
+        .build()
+
+    private val allNetworkConstraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
 
     private val myUploadWork = PeriodicWorkRequestBuilder<UpdateDataWorker>(
         8, TimeUnit.HOURS,
-        7, TimeUnit.HOURS)
-        .setConstraints(constraints)
+        7, TimeUnit.HOURS
+    )
+        .setConstraints(wifiConstraints)
+        .build()
+
+    private val onEachUpdateWork = OneTimeWorkRequestBuilder<UpdateDataWorker>()
+        .setConstraints(allNetworkConstraints)
         .build()
 
 
@@ -31,8 +40,7 @@ class UpdateDataWorkerStart @Inject constructor(
     }
 
 
-    fun startUpdateDataWorker(){
-        WorkManager.getInstance(context).enqueue(myUploadWork)
+    fun startUpdateDataWorker() {
+        WorkManager.getInstance(context).enqueue(listOf(onEachUpdateWork, myUploadWork))
     }
-
 }

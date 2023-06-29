@@ -37,15 +37,27 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         appComponent.inject(this)
         setContentView(mainR.layout.activity_main)
 
-        yandexLauncher(yandexSignUpActivity.getYandexIntent(intent)) {
-            yandexSignUpActivity.registerYandexSignUp(it) {
-                supportFragmentManager.beginTransaction()
-                    .add(mainR.id.main_fragment_container_view, TaskListFragment())
-                    .commit()
 
-                updateDataWorkerStart.startUpdateDataWorker()
-            }
+        yandexLauncher(yandexSignUpActivity.getYandexIntent(intent)) {
+            yandexSignUpActivity.registerYandexSignUp(
+                it,
+                { handlerStartWorkFragment() },
+                { handleErrorInYandex() }
+            )
         }
+    }
+
+    private fun handlerStartWorkFragment() {
+        updateDataWorkerStart.startUpdateDataWorker()
+
+        supportFragmentManager.beginTransaction()
+            .add(mainR.id.main_fragment_container_view, TaskListFragment())
+            .commit()
+    }
+
+
+    private fun handleErrorInYandex() {
+
     }
 
     override fun onBack() {

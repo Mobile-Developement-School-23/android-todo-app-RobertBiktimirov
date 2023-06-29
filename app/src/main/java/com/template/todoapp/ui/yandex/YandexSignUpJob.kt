@@ -31,7 +31,11 @@ class YandexSignUpJob @Inject constructor(
         }
     }
 
-    fun registerYandexSignUp(it: ActivityResult, lambdaStartFragment: (() -> Unit)) {
+    fun registerYandexSignUp(
+        it: ActivityResult,
+        lambdaStartFragment: (() -> Unit),
+        handlerError: (() -> Unit)
+    ) {
         if (token == null) {
             if (it.resultCode == Activity.RESULT_OK) {
                 val yandexAuthToken = yandexSdk.extractToken(it.resultCode, it.data)
