@@ -44,10 +44,6 @@ class TaskListViewModel @Inject constructor(
         _emptinessTodoList.tryEmit(flag)
     }
 
-    fun setAnswerByInternet(flag: Boolean){
-        _noInternet.tryEmit(flag)
-    }
-
     fun updateTodo(todoItem: TodoItem) {
         viewModelScope.launch {
             handleUpdateOrSaveResult(updateTodoListUseCase(todoItem))
