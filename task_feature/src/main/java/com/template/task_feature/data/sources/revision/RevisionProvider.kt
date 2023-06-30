@@ -8,17 +8,19 @@ class RevisionProvider @Inject constructor(
     private val context: Context
 ) {
 
-    private val sharedPreferences =
-        context.getSharedPreferences(
-            context.getString(R.string.name_revision_shared_preference),
-            Context.MODE_PRIVATE
-        )
+    private val sharedPreferences = context.getSharedPreferences(
+        context.getString(R.string.name_revision_shared_preference), Context.MODE_PRIVATE
+    )
 
-    var spRevision: Int = sharedPreferences.getInt(context.getString(R.string.key_sp_revision), -1)
-        set(value) {
-            field = value
-            sharedPreferences.edit()
-                .putInt(context.getString(R.string.key_sp_revision), field)
-                .apply()
-        }
+    private val edit = sharedPreferences.edit()
+
+    var spRevision: Int = sharedPreferences.getInt(context.getString(R.string.key_sp_revision), 0)
+
+    fun updateRevision(newRevision: Int) {
+        edit.putInt(context.getString(R.string.key_sp_revision), newRevision).apply()
+    }
+
+    fun getRevision(): Int =
+        sharedPreferences.getInt(context.getString(R.string.key_sp_revision), 0)
+
 }

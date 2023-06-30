@@ -2,7 +2,6 @@ package com.template.task_feature.ui.task_list_screen
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -20,8 +19,9 @@ import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_list_screen.adapter.TaskListAdapter
 import com.template.task_feature.ui.task_navigation.TaskNavigation
+import com.template.task_feature.ui.utlis.showSnackbarNoInternet
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
-import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -71,21 +71,34 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+        observersData()
+        respondToView()
+    }
+
+    private fun respondToView() {
+        binding.addTaskButton.setOnLongClickListener {
+            startAnimForAddButton()
+            true
+        }
+
+        binding.addTaskButton.setOnClickListener {
+            openSetupTaskScreen(null)
+        }
 
 
+        binding.isVisibleDoneTask.setOnClickListener {
+            binding.isVisibleDoneTask.isActivated = !binding.isVisibleDoneTask.isActivated
+            viewModel.isVisibleDone = binding.isVisibleDoneTask.isActivated
+        }
+    }
+
+    private fun observersData() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.todoList.collectIndexed { index, it ->
-                    Log.d("api test save todoItem", it.toString())
+                viewModel.todoList.collect {
                     viewModel.setIsEmptyList(it.todoItem.isEmpty())
                     taskListAdapter.submitList(it.todoItem)
                     setCountDoneTask(it.todoItem)
-
-                    binding.myTaskTitle.text = if (index == FIRST_LOAD_INDEX) {
-                        getString(R.string.title_update)
-                    } else {
-                        getString(R.string.my_tasks)
-                    }
                 }
             }
         }
@@ -102,15 +115,6 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             }
         }
 
-        binding.addTaskButton.setOnLongClickListener {
-            startAnimForAddButton()
-            true
-        }
-
-        binding.addTaskButton.setOnClickListener {
-            openSetupTaskScreen(null)
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isVisibleDoneTask.collectLatest { flag ->
@@ -124,9 +128,12 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             }
         }
 
-        binding.isVisibleDoneTask.setOnClickListener {
-            binding.isVisibleDoneTask.isActivated = !binding.isVisibleDoneTask.isActivated
-            viewModel.isVisibleDone = binding.isVisibleDoneTask.isActivated
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.noInternet.collect {
+                if (it) {
+                    binding.root.showSnackbarNoInternet {}
+                }
+            }
         }
     }
 
@@ -201,10 +208,4 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             !(taskListAdapter.mapTodoItem[position]?.isCompleted ?: false)
         taskListAdapter.notifyItemChanged(position)
     }
-
-
-    companion object {
-        private const val FIRST_LOAD_INDEX = 1
-    }
-
 }

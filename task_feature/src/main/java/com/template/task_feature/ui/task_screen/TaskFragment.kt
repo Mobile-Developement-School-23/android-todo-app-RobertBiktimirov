@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import com.template.common.utli.timestampToFormattedDate
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.FragmentTaskBinding
@@ -21,6 +22,7 @@ import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_navigation.TaskNavigation
+import com.template.task_feature.ui.utlis.showSnackbarNoInternet
 import com.template.todoapp.ui.task_screen.spinner_adapter.SpinnerAdapter
 import kotlinx.coroutines.launch
 import java.util.*
@@ -111,6 +113,15 @@ class TaskFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.noInternet.collect {
+                if (it) {
+                    binding.root.showSnackbarNoInternet {
+                        viewModel.setNoInternet(false)
+                    }
+                }
+            }
+        }
 
         binding.deadlineSwitch.setOnCheckedChangeListener { _, isChecked ->
             binding.deadlineDate.isVisible = isChecked

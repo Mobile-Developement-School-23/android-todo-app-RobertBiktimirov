@@ -1,6 +1,13 @@
 package com.template.task_feature.domain.entity
 
 
+
+sealed interface RepositoryResult<T : Any>
+
+class RepositorySuccess<T : Any>(val data: T) : RepositoryResult<T>
+class RepositoryError<T : Any>(val code: Int, val message: String?) : RepositoryResult<T>
+class RepositoryException<T : Any>(val e: Throwable) : RepositoryResult<T>
+
 enum class Importance {
     LOW,
     REGULAR,

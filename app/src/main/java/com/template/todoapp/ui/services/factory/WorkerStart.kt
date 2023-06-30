@@ -1,12 +1,14 @@
-package com.template.todoapp.ui.update_data_service
+package com.template.todoapp.ui.services.factory
 
 import android.content.Context
 import androidx.work.*
+import com.template.todoapp.ui.services.load_data_from_bd.LoadDataFromBdWorker
+import com.template.todoapp.ui.services.update_data.UpdateDataWorker
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class UpdateDataWorkerStart @Inject constructor(
-    updateDataWorkerFactory: UpdateDataWorkerFactory,
+class WorkerStart @Inject constructor(
+    updateDataWorkerFactory: CreateWorkerFactory,
     private val context: Context
 ) {
 
@@ -29,6 +31,10 @@ class UpdateDataWorkerStart @Inject constructor(
         .setConstraints(allNetworkConstraints)
         .build()
 
+    private val onEachLoadNewDataWork = OneTimeWorkRequestBuilder<LoadDataFromBdWorker>()
+        .setConstraints(allNetworkConstraints)
+        .build()
+
 
     private val workManagerConfig = Configuration.Builder()
         .setWorkerFactory(updateDataWorkerFactory)
@@ -42,5 +48,9 @@ class UpdateDataWorkerStart @Inject constructor(
 
     fun startUpdateDataWorker() {
         WorkManager.getInstance(context).enqueue(listOf(onEachUpdateWork, myUploadWork))
+    }
+
+    fun startLoadNewDataFromDb(){
+        WorkManager.getInstance(context).enqueue(onEachLoadNewDataWork)
     }
 }

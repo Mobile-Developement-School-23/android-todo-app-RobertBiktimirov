@@ -17,7 +17,7 @@ interface TodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveTodoList(list: List<TodoItemEntity>)
 
-    @Query("delete from todoItem")
+    @Query("DELETE FROM todoItem WHERE todo_id NOT IN (SELECT key_id FROM requests)")
     suspend fun deleteAll()
 
     @Query("delete from todoItem where todo_id = :id")
@@ -39,5 +39,4 @@ interface TodoDao {
         dateOfEditing: Long?,
         id: String,
     )
-
 }

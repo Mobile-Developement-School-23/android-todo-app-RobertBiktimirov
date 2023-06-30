@@ -2,7 +2,11 @@ package com.template.task_feature.data.sources.database
 
 import android.util.Log
 import com.template.common.utli.runCatchingNonCancellation
+import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
+import com.template.database.entity.RequestDto
+import com.template.database.entity.TodoItemEntity
+import com.template.database.entity.ViewRequest
 import com.template.task_feature.data.mappers.toDto
 import com.template.task_feature.data.mappers.toEntity
 import com.template.task_feature.data.mappers.toUi
@@ -13,7 +17,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DatabaseSourceImpl @Inject constructor(
-    private val todoDao: TodoDao
+    private val todoDao: TodoDao,
+    private val requestDao: RequestDao
 ) : DatabaseSource {
 
     override fun getListTodoCache(): Flow<TodoShell> {
@@ -66,5 +71,11 @@ class DatabaseSourceImpl @Inject constructor(
         }.getOrNull()
 
         return todoItem?.toUi()
+    }
+
+    override suspend fun saveRequest(viewRequest: ViewRequest, todoItem: TodoItemEntity) {
+        requestDao.saveRequest(
+            RequestDto(view = viewRequest, todoItemEntity = todoItem, keyId = todoItem.id)
+        )
     }
 }

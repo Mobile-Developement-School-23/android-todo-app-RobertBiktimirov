@@ -3,6 +3,7 @@ package com.template.api.services
 import com.template.api.entity.TodoBody
 import com.template.api.entity.TodoListResponse
 import com.template.api.entity.TodoResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -15,19 +16,19 @@ import retrofit2.http.Path
 interface TodoService {
 
     @GET("list")
-    suspend fun getTodoList(): TodoListResponse
+    suspend fun getTodoList(): Response<TodoListResponse>
 
     @GET("list/{id}")
     suspend fun getTodoItem(
         @Path("id") todoId: String
-    ): TodoResponse
+    ): Response<TodoResponse>
 
 
     @POST("list")
     suspend fun saveTodoItem(
         @Body todoBody: TodoBody,
         @Header("X-Last-Known-Revision") revision: Int
-    ): TodoResponse
+    ): Response<TodoResponse>
 
 
     @PUT("list/{id}")
@@ -35,12 +36,12 @@ interface TodoService {
         @Path("id") todoId: String,
         @Body todoBody: TodoBody,
         @Header("X-Last-Known-Revision") revision: Int
-    ): TodoResponse
+    ): Response<TodoResponse>
 
     @DELETE("list/{id}")
     suspend fun deleteTodoItem(
         @Path("id") todoId: String,
         @Header("X-Last-Known-Revision") revision: Int
-    ): TodoResponse
+    ): Response<TodoResponse>
 
 }

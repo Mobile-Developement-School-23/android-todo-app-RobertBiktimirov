@@ -3,16 +3,17 @@ package com.template.task_feature.ui.task_list_screen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.template.task_feature.domain.entity.TodoItem
-import com.template.todoapp.domain.usecase.DeleteTodoUseCase
+import com.template.task_feature.domain.entity.*
+import com.template.task_feature.domain.usecase.DeleteTodoUseCase
 import com.template.task_feature.domain.usecase.GetTodoListUseCase
-import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
+import com.template.task_feature.domain.usecase.LoadTodoListInDbUseCase
+import com.template.task_feature.domain.usecase.UpdateTodoListUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.template.common.utli.runCatchingNonCancellation
-import com.template.task_feature.domain.entity.TodoShell
-import com.template.task_feature.domain.usecase.LoadTodoListInDbUseCase
-import kotlinx.coroutines.flow.*
 
 class TaskListViewModel @Inject constructor(
     getTodoListUseCase: GetTodoListUseCase,
@@ -23,16 +24,6 @@ class TaskListViewModel @Inject constructor(
 
     private val _noInternet = MutableStateFlow(false)
     val noInternet get() = _noInternet.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            runCatchingNonCancellation {
-                firstLoadTodoListUseCase()
-            }.getOrElse {
-                Log.d("no network and error", "not network :)")
-            }
-        }
-    }
 
     var isVisibleDone: Boolean = false
         set(value) {
@@ -53,18 +44,35 @@ class TaskListViewModel @Inject constructor(
         _emptinessTodoList.tryEmit(flag)
     }
 
+    fun setAnswerByInternet(flag: Boolean){
+        _noInternet.tryEmit(flag)
+    }
+
     fun updateTodo(todoItem: TodoItem) {
         viewModelScope.launch {
-            runCatchingNonCancellation {
-                updateTodoListUseCase(todoItem)
-            }
+            handleUpdateOrSaveResult(updateTodoListUseCase(todoItem))
         }
     }
 
     fun deleteTodo(todoItem: TodoItem) {
         viewModelScope.launch {
-            runCatchingNonCancellation {
-                deleteTodoUseCase(todoItem.id)
+            handleUpdateOrSaveResult(deleteTodoUseCase(todoItem))
+        }
+    }
+
+
+    private fun handleUpdateOrSaveResult(result: RepositoryResult<TodoItem>) {
+
+        when (result) {
+            is RepositoryError -> {
+                Log.d("connection test", "${result.code} ${result.message}")
+            }
+            is RepositoryException -> {
+                Log.d("connection test", result.e.message.toString())
+                _noInternet.tryEmit(true)
+            }
+            is RepositorySuccess -> {
+//                Log.d("connection test", "success delete")
             }
         }
     }

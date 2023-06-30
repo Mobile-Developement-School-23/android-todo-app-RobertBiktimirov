@@ -4,6 +4,7 @@ import android.content.Context
 import com.template.api.RetrofitRepository
 import com.template.api.services.TodoService
 import com.template.database.AppDatabase
+import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
 import dagger.Module
 import dagger.Provides
@@ -23,6 +24,10 @@ class AppModule {
     fun provideTodoDao(appDatabase: AppDatabase): TodoDao {
         return appDatabase.todoDao()
     }
+
+    @Singleton
+    @Provides
+    fun provideRequestDao(appDatabase: AppDatabase): RequestDao = appDatabase.requestDao()
 
 
     @Provides

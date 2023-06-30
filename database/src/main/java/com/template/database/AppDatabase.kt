@@ -4,12 +4,17 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.template.database.converter.ImportanceConverter
+import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
+import com.template.database.entity.RequestDto
 import com.template.database.entity.TodoItemEntity
 
-@Database(entities = [TodoItemEntity::class], version = 1, exportSchema = false)
+@Database(entities = [TodoItemEntity::class, RequestDto::class], version = 2, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun todoDao(): TodoDao
+    abstract fun requestDao(): RequestDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null
@@ -28,6 +33,7 @@ abstract class AppDatabase: RoomDatabase() {
                     AppDatabase::class.java,
                     "todoApp.db"
                 )
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = db
                 return db

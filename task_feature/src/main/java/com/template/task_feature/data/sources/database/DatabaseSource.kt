@@ -1,5 +1,7 @@
 package com.template.task_feature.data.sources.database
 
+import com.template.database.entity.TodoItemEntity
+import com.template.database.entity.ViewRequest
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.entity.TodoShell
 import kotlinx.coroutines.flow.Flow
@@ -11,4 +13,5 @@ interface DatabaseSource {
     suspend fun editTodoCache(todoItem: TodoItem)
     suspend fun deleteTodoCache(todoId: String)
     suspend fun getItemTodoCache(todoId: String): TodoItem?
+    suspend fun saveRequest(viewRequest: ViewRequest, todoItem: TodoItemEntity)
 }

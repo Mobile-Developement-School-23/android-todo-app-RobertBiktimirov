@@ -1,6 +1,7 @@
 package com.template.task_feature.di.modules
 
 import com.template.database.AppDatabase
+import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
 import com.template.task_feature.data.repository.TodoItemRepositoryImpl
 import com.template.task_feature.data.sources.api.ApiSource
@@ -20,6 +21,12 @@ class TaskModule {
     @Provides
     fun provideTodoDao(appDatabase: AppDatabase): TodoDao {
         return appDatabase.todoDao()
+    }
+
+    @TaskScope
+    @Provides
+    fun provideRequestDao(appDatabase: AppDatabase): RequestDao {
+        return appDatabase.requestDao()
     }
 
     @Module

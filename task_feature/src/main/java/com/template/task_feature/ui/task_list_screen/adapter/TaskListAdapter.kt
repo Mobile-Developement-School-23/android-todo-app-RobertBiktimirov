@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StrikethroughSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -42,12 +43,13 @@ class TaskListAdapter(
                 dataTask.text = todoItem.deadline.timestampToFormattedDate()
                 dataTask.isVisible = todoItem.deadline != null
                 isChooseBoxTask.isChecked = todoItem.isCompleted
-                setupDisplayTaskText(this@TaskViewHolder, false)
+                setupDisplayTaskText(this@TaskViewHolder, false, todoItem)
 
 
                 binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
-                    onChooseClickListener(getItem(adapterPosition).copy(isCompleted = isChecked))
-                    setupDisplayTaskText(this@TaskViewHolder, isChecked)
+                    onChooseClickListener(todoItem.copy(isCompleted = isChecked))
+                    setupDisplayTaskText(this@TaskViewHolder, isChecked, todoItem)
+                    Log.d("okhttp.OkHttpClient", "from adapter call update")
                 }
 
                 when (todoItem.importance) {
@@ -112,16 +114,16 @@ class TaskListAdapter(
             onInfoClickListener(getItem(holder.adapterPosition))
         }
 
-
         return holder
     }
 
     private fun setupDisplayTaskText(
         holder: TaskViewHolder,
-        isChecked: Boolean
+        isChecked: Boolean,
+        todoItem: TodoItem
     ) {
         with(holder.binding) {
-            if (isChecked || getItem(holder.adapterPosition).isCompleted) {
+            if (isChecked || todoItem.isCompleted) {
                 val spannableString = SpannableString(titleTask.text)
                 spannableString.setSpan(
                     StrikethroughSpan(),
@@ -133,7 +135,7 @@ class TaskListAdapter(
                 titleTask.alpha = 0.3F
             } else {
                 titleTask.alpha = 1F
-                titleTask.text = getItem(holder.adapterPosition).text
+                titleTask.text = todoItem.text
             }
         }
     }

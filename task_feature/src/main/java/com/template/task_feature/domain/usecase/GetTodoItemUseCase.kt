@@ -1,5 +1,6 @@
 package com.template.task_feature.domain.usecase
 
+import com.template.task_feature.domain.entity.RepositoryResult
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.repository.TodoItemRepository
 import javax.inject.Inject
@@ -8,7 +9,7 @@ class GetTodoItemUseCase @Inject constructor(
     private val repository: TodoItemRepository
 ) {
 
-    suspend operator fun invoke(id: String): TodoItem {
+    suspend operator fun invoke(id: String): RepositoryResult<TodoItem> {
         return repository.getTodoItem(id)
     }
 

@@ -1,12 +1,13 @@
 package com.template.task_feature.data.sources.api
 
+import com.template.api.entity.TodoListResponse
+import com.template.api.entity.TodoResponse
 import com.template.api.services.TodoService
-import com.template.common.utli.runCatchingNonCancellation
+import com.template.common.utli.ApiResult
+import com.template.common.utli.handleApi
 import com.template.task_feature.data.mappers.toBody
-import com.template.task_feature.data.mappers.toUi
 import com.template.task_feature.data.sources.revision.RevisionProvider
 import com.template.task_feature.domain.entity.TodoItem
-import com.template.task_feature.domain.entity.TodoShell
 import javax.inject.Inject
 
 class ApiSourceImpl @Inject constructor(
@@ -14,75 +15,38 @@ class ApiSourceImpl @Inject constructor(
     private val revisionProvider: RevisionProvider
 ) : ApiSource {
 
-    override suspend fun getListTodoApi(): TodoShell? {
-        val apiResponse = runCatchingNonCancellation {
-            todoService.getTodoList()
-        }.getOrElse {
-            return null
-        }
-
-        revisionProvider.spRevision = apiResponse.revision
-        return apiResponse.list.toUi()
+    override suspend fun getListTodoApi(): ApiResult<TodoListResponse> {
+        return handleApi { todoService.getTodoList() }
     }
 
-    override suspend fun saveInApi(todoItem: TodoItem): Boolean {
-        runCatchingNonCancellation {
-            val answer = todoService.saveTodoItem(todoItem.toBody(), revisionProvider.spRevision)
-            if (answer.status == "ok") {
-                revisionProvider.spRevision = answer.revision
-            }
-        }.getOrElse {
-            return false
+    override suspend fun saveInApi(todoItem: TodoItem): ApiResult<TodoResponse> {
+        return handleApi {
+            todoService.saveTodoItem(
+                todoItem.toBody(),
+                revisionProvider.getRevision()
+            )
         }
-
-        return true
     }
 
-    override suspend fun editTodoApi(todoItem: TodoItem): TodoItem? {
-        runCatchingNonCancellation {
-            val apiAnswer = todoService.editTodoItem(
+    override suspend fun editTodoApi(todoItem: TodoItem): ApiResult<TodoResponse> {
+        return handleApi {
+            todoService.editTodoItem(
                 todoItem.id,
                 todoItem.toBody(),
-                revisionProvider.spRevision
+                revisionProvider.getRevision()
             )
-
-            revisionProvider.spRevision += 1
-
-            if (apiAnswer.status == "ok") {
-                return apiAnswer.todoItem.toUi()
-            }
-        }.getOrElse {
-            return null
         }
-        return null
     }
 
-    override suspend fun deleteTodoApi(todoId: String): Boolean {
-        runCatchingNonCancellation {
-            val apiAnswer = todoService.deleteTodoItem(todoId, revisionProvider.spRevision)
-            revisionProvider.spRevision += 1
-            if (apiAnswer.todoItem.id == todoId) {
-                return true
-            }
-        }.getOrElse {
-            return false
+    override suspend fun deleteTodoApi(todoId: String): ApiResult<TodoResponse> {
+        return handleApi {
+            todoService.deleteTodoItem(todoId, revisionProvider.getRevision())
         }
-
-        return false
     }
 
-    override suspend fun getItemTodoApi(id: String): TodoItem? {
-
-        runCatchingNonCancellation {
-            val todoItem = todoService.getTodoItem(id)
-
-            if (todoItem.status == "ok") {
-                return todoItem.todoItem.toUi()
-            }
-
-        }.getOrElse {
-            return null
+    override suspend fun getItemTodoApi(id: String): ApiResult<TodoResponse> {
+        return handleApi {
+            todoService.getTodoItem(id)
         }
-        return null
     }
 }

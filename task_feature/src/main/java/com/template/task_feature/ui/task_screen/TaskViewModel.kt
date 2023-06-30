@@ -1,14 +1,13 @@
 package com.template.task_feature.ui.task_screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.template.common.utli.runCatchingNonCancellation
-import com.template.task_feature.domain.entity.Importance
-import com.template.task_feature.domain.entity.TodoItem
-import com.template.todoapp.domain.usecase.DeleteTodoUseCase
+import com.template.task_feature.domain.entity.*
+import com.template.task_feature.domain.usecase.DeleteTodoUseCase
 import com.template.task_feature.domain.usecase.GetTodoItemUseCase
-import com.template.todoapp.domain.usecase.SaveTodoItemUseCase
-import com.template.todoapp.domain.usecase.UpdateTodoListUseCase
+import com.template.task_feature.domain.usecase.SaveTodoItemUseCase
+import com.template.task_feature.domain.usecase.UpdateTodoListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -42,9 +41,12 @@ class TaskViewModel @Inject constructor(
     private val _closeScreen = MutableStateFlow(false)
     val closeScreen = _closeScreen.asStateFlow()
 
-    private fun setTodo(todoItem: TodoItem) {
-        _todoItemState.tryEmit(todoItem)
-        setLoadingStatus(false)
+    private val _noInternet = MutableStateFlow(false)
+    val noInternet = _noInternet.asStateFlow()
+
+    fun setNoInternet(flag: Boolean){
+        _noInternet.tryEmit(flag)
+        _closeScreen.tryEmit(!flag)
     }
 
     fun setTaskText(text: String) {
@@ -59,13 +61,23 @@ class TaskViewModel @Inject constructor(
 
     fun getTodoItem(id: String) {
         viewModelScope.launch {
-            setLoadingStatus(true)
-            val todo = runCatchingNonCancellation { getTodoItemUseCase(id) }.getOrNull()
-            if (todo != null) {
-                setTodo(todo)
-            } else {
-                _error.tryEmit(true)
+            _loadingStatus.tryEmit(true)
+
+            when (val todoItem = getTodoItemUseCase.invoke(id)) {
+                is RepositoryError -> {
+                    _error.tryEmit(true)
+                    _loadingStatus.tryEmit(false)
+                }
+                is RepositoryException -> {
+                    _error.tryEmit(true)
+                    _loadingStatus.tryEmit(false)
+                }
+                is RepositorySuccess -> {
+                    _todoItemState.tryEmit(todoItem.data)
+                    _loadingStatus.tryEmit(false)
+                }
             }
+
         }
     }
 
@@ -75,14 +87,10 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    private fun setLoadingStatus(flag: Boolean) {
-        _loadingStatus.tryEmit(flag)
-    }
-
     fun deleteTodo() {
         viewModelScope.launch {
             _todoItemState.value?.let {
-                deleteTodoUseCase(it.id)
+                handleUpdateOrSaveResult(deleteTodoUseCase(it))
             }
         }
     }
@@ -95,39 +103,56 @@ class TaskViewModel @Inject constructor(
 
         if (taskText.value.isNotEmpty()) {
             if (_todoItemState.value == null) {
-                saveTodoItemUseCase(
-                    TodoItem(
-                        generateTodoId(),
-                        taskText.value,
-                        importance,
-                        deadline.value,
-                        false,
-                        "#000000",
-                        dateOfCreating,
-                        null
-                    )
-                )
-                _closeScreen.emit(true)
-            } else {
-                todoItemState.value?.let {
-                    updateTodoListUseCase(
+                handleUpdateOrSaveResult(
+                    saveTodoItemUseCase(
                         TodoItem(
-                            it.id,
+                            generateTodoId(),
                             taskText.value,
                             importance,
                             deadline.value,
-                            it.isCompleted,
+                            false,
                             "#000000",
-                            it.dateOfCreating,
-                            Calendar.getInstance().timeInMillis
+                            dateOfCreating,
+                            null
+                        )
+                    )
+                )
+            } else {
+                todoItemState.value?.let {
+                    handleUpdateOrSaveResult(
+                        updateTodoListUseCase(
+                            TodoItem(
+                                it.id,
+                                taskText.value,
+                                importance,
+                                deadline.value,
+                                it.isCompleted,
+                                "#000000",
+                                it.dateOfCreating,
+                                Calendar.getInstance().timeInMillis
+                            )
                         )
                     )
                 }
-
-                _closeScreen.emit(true)
             }
         } else {
             _nullErrorText.emit(true)
+        }
+    }
+
+
+    private fun handleUpdateOrSaveResult(result: RepositoryResult<TodoItem>) {
+
+        when (result) {
+            is RepositoryError -> {
+                Log.d("connection test", "${result.code} ${result.message}")
+            }
+            is RepositoryException -> {
+                _noInternet.tryEmit(true)
+            }
+            is RepositorySuccess -> {
+                _closeScreen.tryEmit(true)
+            }
         }
     }
 

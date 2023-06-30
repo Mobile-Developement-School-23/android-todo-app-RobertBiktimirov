@@ -42,6 +42,8 @@ class YandexSignUpJob @Inject constructor(
                 if (yandexAuthToken != null) {
                     tokenProvider.saveToken(yandexAuthToken.value, lambdaStartFragment)
                 }
+            } else {
+                handlerError()
             }
 
         } else {
