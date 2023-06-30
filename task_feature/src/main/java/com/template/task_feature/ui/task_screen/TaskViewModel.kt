@@ -103,6 +103,7 @@ class TaskViewModel @Inject constructor(
     private suspend fun saveOrUpdateTask(importance: Importance, dateOfCreating: Long) {
 
         if (taskText.value.isNotEmpty()) {
+            _loadingStatus.tryEmit(true)
             if (_todoItemState.value == null) {
                 handleUpdateOrSaveResult(
                     saveTodoItemUseCase(
@@ -148,11 +149,14 @@ class TaskViewModel @Inject constructor(
             is RepositoryError -> {
                 Log.d("connection test", "${result.code} ${result.message}")
                 _error.tryEmit(true)
+                _loadingStatus.tryEmit(false)
             }
             is RepositoryException -> {
                 _noInternet.tryEmit(true)
+                _loadingStatus.tryEmit(false)
             }
             is RepositorySuccess -> {
+                _loadingStatus.tryEmit(false)
                 _closeScreen.tryEmit(true)
             }
         }
