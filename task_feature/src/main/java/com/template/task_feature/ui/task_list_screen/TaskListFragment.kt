@@ -97,7 +97,7 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.todoList.collect {
                     viewModel.setIsEmptyList(it.todoItem.isEmpty())
-                    taskListAdapter.submitList(it.todoItem)
+                    taskListAdapter.submitList(it.todoItem.toSet().toMutableList())
                     setCountDoneTask(it.todoItem)
                 }
             }

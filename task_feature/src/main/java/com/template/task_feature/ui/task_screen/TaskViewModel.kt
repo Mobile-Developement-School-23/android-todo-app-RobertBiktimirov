@@ -147,6 +147,7 @@ class TaskViewModel @Inject constructor(
         when (result) {
             is RepositoryError -> {
                 Log.d("connection test", "${result.code} ${result.message}")
+                _error.tryEmit(true)
             }
             is RepositoryException -> {
                 _noInternet.tryEmit(true)

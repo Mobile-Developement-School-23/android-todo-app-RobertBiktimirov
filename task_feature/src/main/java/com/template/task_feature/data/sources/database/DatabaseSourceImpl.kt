@@ -14,6 +14,7 @@ import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.entity.TodoShell
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class DatabaseSourceImpl @Inject constructor(
@@ -22,7 +23,11 @@ class DatabaseSourceImpl @Inject constructor(
 ) : DatabaseSource {
 
     override fun getListTodoCache(): Flow<TodoShell> {
-        return todoDao.getTodoItems().map { it.toUi() }
+        return todoDao.getTodoItems()
+            .transform { listTodoItem ->
+                emit(listTodoItem.sortedBy { todoItem -> todoItem.internalId })
+            }
+            .map { it.toUi() }
     }
 
     override suspend fun saveInCacheTodoItem(todoItem: TodoItem) {
