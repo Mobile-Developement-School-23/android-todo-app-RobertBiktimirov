@@ -33,6 +33,7 @@ class WorkerStart @Inject constructor(
 
     private val onEachLoadNewDataWork = OneTimeWorkRequestBuilder<LoadDataFromBdWorker>()
         .setConstraints(allNetworkConstraints)
+        .setInitialDelay(3L, TimeUnit.MINUTES)
         .build()
 
 
