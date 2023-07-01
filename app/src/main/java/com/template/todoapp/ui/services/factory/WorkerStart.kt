@@ -4,13 +4,17 @@ import android.content.Context
 import androidx.work.*
 import com.template.todoapp.ui.services.load_data_from_bd.LoadDataFromBdWorker
 import com.template.todoapp.ui.services.update_data.UpdateDataWorker
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 class WorkerStart @Inject constructor(
     updateDataWorkerFactory: CreateWorkerFactory,
     private val context: Context
 ) {
+
+    private var workManager: WorkManager by Delegates.notNull()
 
     private val wifiConstraints = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.UNMETERED)
@@ -34,6 +38,7 @@ class WorkerStart @Inject constructor(
     private val onEachLoadNewDataWork = OneTimeWorkRequestBuilder<LoadDataFromBdWorker>()
         .setConstraints(allNetworkConstraints)
         .setInitialDelay(3L, TimeUnit.MINUTES)
+        .setId(onEachLoadNewDataUUID)
         .build()
 
 
@@ -44,14 +49,30 @@ class WorkerStart @Inject constructor(
 
     init {
         WorkManager.initialize(context, workManagerConfig)
+        workManager = WorkManager.getInstance(context)
     }
 
 
     fun startUpdateDataWorker() {
-        WorkManager.getInstance(context).enqueue(listOf(onEachUpdateWork, myUploadWork))
+        workManager
+            .beginWith(onEachLoadNewDataWork)
+            .then(onEachUpdateWork)
+            .enqueue()
     }
 
-    fun startLoadNewDataFromDb(){
-        WorkManager.getInstance(context).enqueue(onEachLoadNewDataWork)
+    fun startLoadNewDataFromDb() {
+
+        if (workManager.getWorkInfoById(onEachLoadNewDataUUID).isCancelled) {
+            workManager.enqueue(onEachLoadNewDataWork)
+        }
+    }
+
+    fun startPeriodicUpdateData(){
+        workManager.enqueue(myUploadWork)
+    }
+
+
+    companion object {
+        private var onEachLoadNewDataUUID: UUID = UUID.randomUUID()
     }
 }
