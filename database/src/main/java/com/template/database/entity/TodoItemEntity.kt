@@ -1,9 +1,6 @@
 package com.template.database.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.template.database.converter.ImportanceConverter
 
 
@@ -23,6 +20,7 @@ data class TodoItemEntity(
     @ColumnInfo("importance") val importance: ImportanceDto,
     @ColumnInfo("deadline") val deadline: Long?,
     @ColumnInfo("flag") var flag: Boolean,
+    @ColumnInfo("color") var color: String? = null,
     @ColumnInfo("dateOfCreating") val dateOfCreating: Long,
     @ColumnInfo("dateOfEditing") var dateOfEditing: Long?
 )

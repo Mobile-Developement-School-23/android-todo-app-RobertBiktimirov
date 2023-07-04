@@ -1,43 +1,125 @@
 package com.template.task_feature.data.repository
 
-import com.template.database.dao.TodoDao
-import com.template.task_feature.domain.entity.TodoItem
+import android.util.Log
+import com.template.common.utli.ApiError
+import com.template.common.utli.ApiException
+import com.template.common.utli.ApiSuccess
+import com.template.database.entity.ViewRequest
+import com.template.task_feature.data.mappers.toEntity
+import com.template.task_feature.data.mappers.toUi
+import com.template.task_feature.data.sources.api.ApiSource
+import com.template.task_feature.data.sources.database.DatabaseSource
+import com.template.task_feature.data.sources.revision.RevisionProvider
+import com.template.task_feature.domain.entity.*
 import com.template.task_feature.domain.repository.TodoItemRepository
-import com.template.todoapp.data.mappers.toEntity
-import com.template.todoapp.data.mappers.toUi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class TodoItemRepositoryImpl @Inject constructor(
-    private val todoDao: TodoDao
+    private val apiSource: ApiSource,
+    private val databaseSource: DatabaseSource,
+    private val revisionProvider: RevisionProvider
 ) : TodoItemRepository {
 
-    override fun getTodoList(): Flow<List<TodoItem>> {
-        return todoDao.getTodoItems().map { it.toUi() }
+    override fun getTodoList(): Flow<TodoShell> {
+        return databaseSource.getListTodoCache()
     }
 
-    override suspend fun saveTodoItem(todoItem: TodoItem) {
-        return todoDao.saveTodoItem(todoItem.toEntity())
+    override suspend fun firstLoadTodoList(): RepositoryResult<List<TodoItem>> {
+        Log.d("connection test", "firstLoadTodoList")
+        return when (val apiResponse = apiSource.getListTodoApi()) {
+            is ApiError -> {
+                RepositoryError(apiResponse.code, apiResponse.message)
+            }
+            is ApiException -> {
+                RepositoryException(apiResponse.e)
+            }
+            is ApiSuccess -> {
+                databaseSource.saveInCacheTodoList(apiResponse.data.list.toUi().todoItem)
+                revisionProvider.updateRevision(apiResponse.data.revision)
+                RepositorySuccess(apiResponse.data.list.toUi().todoItem)
+            }
+        }
     }
 
-    override suspend fun deleteTodoItem(id: String) {
-        return todoDao.deleteTodoItem(id)
+    override suspend fun saveTodoItem(todoItem: TodoItem): RepositoryResult<TodoItem> {
+        Log.d("connection test", "saveTodoItem")
+        databaseSource.saveInCacheTodoItem(todoItem)
+
+        return when (val apiResponse = apiSource.saveInApi(todoItem)) {
+            is ApiError -> {
+                RepositoryError(apiResponse.code, apiResponse.message)
+            }
+            is ApiException -> {
+                databaseSource.saveRequest(ViewRequest.SAVE, todoItem.toEntity())
+                RepositoryException(apiResponse.e)
+            }
+            is ApiSuccess -> {
+                revisionProvider.updateRevision(apiResponse.data.revision)
+                RepositorySuccess(apiResponse.data.todoItem.toUi())
+            }
+        }
     }
 
-    override suspend fun updateTodoItem(todoItem: TodoItem) {
-        val entity = todoItem.toEntity()
-        return todoDao.updateTodoItem(
-            entity.text,
-            entity.importance,
-            entity.deadline,
-            if (entity.flag) 1 else 0,
-            entity.dateOfCreating,
-            entity.id
-        )
+    override suspend fun deleteTodoItem(todoItem: TodoItem): RepositoryResult<TodoItem> {
+        Log.d("connection test", "deleteTodoItem")
+
+        databaseSource.deleteTodoCache(todoItem.id)
+
+        return when (val apiResponse = apiSource.deleteTodoApi(todoItem.id)) {
+            is ApiError -> {
+                RepositoryError(apiResponse.code, apiResponse.message)
+            }
+            is ApiException -> {
+                databaseSource.saveRequest(ViewRequest.DELETE, todoItem.toEntity())
+                RepositoryException(apiResponse.e)
+            }
+            is ApiSuccess -> {
+                revisionProvider.updateRevision(apiResponse.data.revision)
+                RepositorySuccess(apiResponse.data.todoItem.toUi())
+            }
+        }
     }
 
-    override suspend fun getTodoItem(id: String): TodoItem {
-        return todoDao.getTodoItem(id).toUi()
+    override suspend fun updateTodoItem(todoItem: TodoItem): RepositoryResult<TodoItem> {
+        Log.d("connection test", "updateTodoItem")
+        databaseSource.editTodoCache(todoItem)
+
+        return when(val apiResponse = apiSource.editTodoApi(todoItem)) {
+            is ApiError -> {
+                RepositoryError(apiResponse.code, apiResponse.message)
+            }
+            is ApiException -> {
+                databaseSource.saveRequest(ViewRequest.UPDATE, todoItem.toEntity())
+                RepositoryException(apiResponse.e)
+            }
+            is ApiSuccess -> {
+                revisionProvider.updateRevision(apiResponse.data.revision)
+                RepositorySuccess(apiResponse.data.todoItem.toUi())
+            }
+        }
+    }
+
+    override suspend fun getTodoItem(id: String): RepositoryResult<TodoItem> {
+        Log.d("connection test", "getTodoItem")
+        val cache = databaseSource.getItemTodoCache(id)
+        val todoItem = if (cache != null) {
+            return RepositorySuccess(cache)
+        } else {
+            when(val apiResponse = apiSource.getItemTodoApi(id)) {
+                is ApiError -> {
+                    RepositoryError(apiResponse.code, apiResponse.message)
+                }
+                is ApiException -> {
+                    RepositoryException(apiResponse.e)
+                }
+                is ApiSuccess -> {
+                    revisionProvider.updateRevision(apiResponse.data.revision)
+                    RepositorySuccess(apiResponse.data.todoItem.toUi())
+                }
+            }
+        }
+
+        return todoItem
     }
 }

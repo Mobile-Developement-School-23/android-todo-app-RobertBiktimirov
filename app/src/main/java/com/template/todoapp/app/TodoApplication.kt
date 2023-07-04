@@ -2,6 +2,7 @@ package com.template.todoapp.app
 
 import android.app.Application
 import android.content.Context
+import com.template.api.ApiTokenProvider
 import com.template.task_feature.di.deps.TaskDepsStore
 import com.template.todoapp.di.AppComponent
 import com.template.todoapp.di.DaggerAppComponent
@@ -21,7 +22,9 @@ class TodoApplication : Application() {
             .context(this)
             .build()
 
+
         TaskDepsStore.deps = appComponent
+
     }
 
 }

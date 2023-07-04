@@ -13,7 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
-import com.template.common.utli.toFormatDate
+import com.google.android.material.snackbar.Snackbar
+import com.template.common.utli.timestampToFormattedDate
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.FragmentTaskBinding
 import com.template.task_feature.di.TaskComponentViewModel
@@ -21,7 +22,7 @@ import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_navigation.TaskNavigation
-import com.template.todoapp.ui.task_screen.TaskViewModel
+import com.template.task_feature.ui.utlis.showSnackbarNoInternet
 import com.template.todoapp.ui.task_screen.spinner_adapter.SpinnerAdapter
 import kotlinx.coroutines.launch
 import java.util.*
@@ -85,7 +86,7 @@ class TaskFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.deadline.collect {
-                binding.deadlineDate.text = it.toFormatDate()
+                binding.deadlineDate.text = it.timestampToFormattedDate()
             }
         }
 
@@ -112,6 +113,15 @@ class TaskFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.noInternet.collect {
+                if (it) {
+                    binding.root.showSnackbarNoInternet {
+                        viewModel.setNoInternet(false)
+                    }
+                }
+            }
+        }
 
         binding.deadlineSwitch.setOnCheckedChangeListener { _, isChecked ->
             binding.deadlineDate.isVisible = isChecked
@@ -128,7 +138,6 @@ class TaskFragment : Fragment() {
 
         binding.deleteButton.setOnClickListener {
             viewModel.deleteTodo()
-            navigation?.onBack()
         }
 
         binding.saveTask.setOnClickListener {
@@ -186,8 +195,8 @@ class TaskFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
         imm.hideSoftInputFromWindow(
             binding.editTextTask.windowToken,
             0

@@ -1,4 +1,4 @@
-package com.template.task_feature.ui.main_screen
+package com.template.task_feature.ui.task_list_screen
 
 import android.content.Context
 import android.os.Bundle
@@ -17,15 +17,16 @@ import com.template.task_feature.databinding.FragmentMainBinding
 import com.template.task_feature.di.TaskComponentViewModel
 import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.TodoItem
-import com.template.task_feature.ui.main_screen.adapter.TaskListAdapter
+import com.template.task_feature.ui.task_list_screen.adapter.TaskListAdapter
 import com.template.task_feature.ui.task_navigation.TaskNavigation
-import com.template.todoapp.ui.main_screen.MainViewModel
+import com.template.task_feature.ui.utlis.showSnackbarNoInternet
 import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
+class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("binding not must be null")
@@ -36,7 +37,7 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+        ViewModelProvider(this, viewModelFactory)[TaskListViewModel::class.java]
     }
 
 
@@ -70,14 +71,34 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+        observersData()
+        respondToView()
+    }
+
+    private fun respondToView() {
+        binding.addTaskButton.setOnLongClickListener {
+            startAnimForAddButton()
+            true
+        }
+
+        binding.addTaskButton.setOnClickListener {
+            openSetupTaskScreen(null)
+        }
 
 
+        binding.isVisibleDoneTask.setOnClickListener {
+            binding.isVisibleDoneTask.isActivated = !binding.isVisibleDoneTask.isActivated
+            viewModel.isVisibleDone = binding.isVisibleDoneTask.isActivated
+        }
+    }
+
+    private fun observersData() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.todoList.collect {
-                    viewModel.setIsEmptyList(it.isEmpty())
-                    taskListAdapter.submitList(it)
-                    setCountDoneTask(it)
+                    viewModel.setIsEmptyList(it.todoItem.isEmpty())
+                    taskListAdapter.submitList(it.todoItem.toSet().toMutableList())
+                    setCountDoneTask(it.todoItem)
                 }
             }
         }
@@ -94,31 +115,25 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             }
         }
 
-        binding.addTaskButton.setOnLongClickListener {
-            startAnimForAddButton()
-            true
-        }
-
-        binding.addTaskButton.setOnClickListener {
-            openSetupTaskScreen(null)
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isVisibleDoneTask.collectLatest { flag ->
                     val listItemTodo: List<TodoItem> = if (flag) {
-                        viewModel.todoList.value.filter { item -> !item.isCompleted }
+                        viewModel.todoList.value.todoItem.filter { item -> !item.isCompleted }
                     } else {
-                        viewModel.todoList.value
+                        viewModel.todoList.value.todoItem
                     }
                     taskListAdapter.submitList(listItemTodo)
                 }
             }
         }
 
-        binding.isVisibleDoneTask.setOnClickListener {
-            binding.isVisibleDoneTask.isActivated = !binding.isVisibleDoneTask.isActivated
-            viewModel.isVisibleDone = binding.isVisibleDoneTask.isActivated
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.noInternet.collect {
+                if (it) {
+                    binding.root.showSnackbarNoInternet {}
+                }
+            }
         }
     }
 
@@ -193,5 +208,4 @@ class MainFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             !(taskListAdapter.mapTodoItem[position]?.isCompleted ?: false)
         taskListAdapter.notifyItemChanged(position)
     }
-
 }

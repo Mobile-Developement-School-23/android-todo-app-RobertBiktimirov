@@ -1,10 +1,11 @@
-package com.template.task_feature.ui.main_screen.adapter
+package com.template.task_feature.ui.task_list_screen.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StrikethroughSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -13,7 +14,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.template.common.utli.toFormatDate
+import com.template.common.utli.timestampToFormattedDate
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.ItemTaskListBinding
 import com.template.task_feature.domain.entity.Importance
@@ -39,10 +40,17 @@ class TaskListAdapter(
             with(binding) {
 
                 titleTask.text = todoItem.text
-                dataTask.text = todoItem.deadline.toFormatDate()
+                dataTask.text = todoItem.deadline.timestampToFormattedDate()
                 dataTask.isVisible = todoItem.deadline != null
                 isChooseBoxTask.isChecked = todoItem.isCompleted
-                setupDisplayTaskText(this@TaskViewHolder, false)
+                setupDisplayTaskText(this@TaskViewHolder, false, todoItem)
+
+
+                binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
+                    onChooseClickListener(todoItem.copy(isCompleted = isChecked))
+                    setupDisplayTaskText(this@TaskViewHolder, isChecked, todoItem)
+                    Log.d("okhttp.OkHttpClient", "from adapter call update")
+                }
 
                 when (todoItem.importance) {
                     Importance.URGENT -> {
@@ -102,25 +110,20 @@ class TaskListAdapter(
         val binding = ItemTaskListBinding.inflate(inflater)
         val holder = TaskViewHolder(binding, parent.context)
 
-        holder.binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
-            onChooseClickListener(getItem(holder.adapterPosition).copy(isCompleted = isChecked))
-            setupDisplayTaskText(holder, isChecked)
-        }
-
         holder.binding.bodyTask.setOnClickListener {
             onInfoClickListener(getItem(holder.adapterPosition))
         }
-
 
         return holder
     }
 
     private fun setupDisplayTaskText(
         holder: TaskViewHolder,
-        isChecked: Boolean
+        isChecked: Boolean,
+        todoItem: TodoItem
     ) {
         with(holder.binding) {
-            if (isChecked || getItem(holder.adapterPosition).isCompleted) {
+            if (isChecked || todoItem.isCompleted) {
                 val spannableString = SpannableString(titleTask.text)
                 spannableString.setSpan(
                     StrikethroughSpan(),
@@ -132,7 +135,7 @@ class TaskListAdapter(
                 titleTask.alpha = 0.3F
             } else {
                 titleTask.alpha = 1F
-                titleTask.text = getItem(holder.adapterPosition).text
+                titleTask.text = todoItem.text
             }
         }
     }
