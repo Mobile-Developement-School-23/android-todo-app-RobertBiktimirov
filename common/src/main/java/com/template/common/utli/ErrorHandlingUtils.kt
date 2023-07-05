@@ -11,7 +11,6 @@ inline fun <R> runCatchingNonCancellation(block: () -> R): Result<R> {
     }
 }
 
-
 sealed interface ApiResult<T : Any>
 
 class ApiSuccess<T : Any>(val data: T) : ApiResult<T>

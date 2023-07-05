@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import com.template.todoapp.ui.services.update_data.UpdateDataWorker
-import com.template.todoapp.ui.services.load_data_from_bd.LoadDataFromBdWorker
+import com.template.todoapp.data.worker.load_data_from_bd.LoadDataFromBdWorker
+import com.template.todoapp.data.worker.update_data.UpdateDataWorker
 import javax.inject.Inject
 
 class CreateWorkerFactory @Inject constructor(

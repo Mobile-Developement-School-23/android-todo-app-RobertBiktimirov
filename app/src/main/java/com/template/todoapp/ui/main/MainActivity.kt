@@ -53,7 +53,13 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
 
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         startYandexSignUp()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
     }
 
     private fun startYandexSignUp() {

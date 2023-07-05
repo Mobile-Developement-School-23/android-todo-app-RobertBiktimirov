@@ -83,4 +83,14 @@ class DatabaseSourceImpl @Inject constructor(
             RequestDto(view = viewRequest, todoItemEntity = todoItem, keyId = todoItem.id)
         )
     }
+
+    override suspend fun getRequests(): List<RequestDto> {
+        return requestDao.getRequest()
+    }
+
+    override suspend fun deleteRequest(requestDto: RequestDto) {
+        requestDao.deleteRequest(requestDto)
+    }
+
+
 }

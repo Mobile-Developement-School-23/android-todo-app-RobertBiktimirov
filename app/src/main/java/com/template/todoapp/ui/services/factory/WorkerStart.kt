@@ -1,16 +1,16 @@
 package com.template.todoapp.ui.services.factory
 
 import android.content.Context
+import android.util.Log
 import androidx.work.*
-import com.template.todoapp.ui.services.load_data_from_bd.LoadDataFromBdWorker
-import com.template.todoapp.ui.services.update_data.UpdateDataWorker
-import java.util.UUID
+import com.template.todoapp.data.worker.load_data_from_bd.LoadDataFromBdWorker
+import com.template.todoapp.data.worker.update_data.UpdateDataWorker
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class WorkerStart @Inject constructor(
-    updateDataWorkerFactory: CreateWorkerFactory,
     private val context: Context
 ) {
 
@@ -42,32 +42,24 @@ class WorkerStart @Inject constructor(
         .build()
 
 
-    private val workManagerConfig = Configuration.Builder()
-        .setWorkerFactory(updateDataWorkerFactory)
-        .build()
-
-
     init {
-        WorkManager.initialize(context, workManagerConfig)
         workManager = WorkManager.getInstance(context)
     }
 
 
     fun startUpdateDataWorker() {
-        workManager
-            .beginWith(onEachLoadNewDataWork)
-            .then(onEachUpdateWork)
-            .enqueue()
+        Log.d("testWorkManager", "startUpdateDataWorker")
+        workManager.enqueue(onEachUpdateWork)
     }
 
     fun startLoadNewDataFromDb() {
 
-        if (workManager.getWorkInfoById(onEachLoadNewDataUUID).isCancelled) {
+        if (workManager.getWorkInfoById(onEachLoadNewDataUUID).isDone) {
             workManager.enqueue(onEachLoadNewDataWork)
         }
     }
 
-    fun startPeriodicUpdateData(){
+    fun startPeriodicUpdateData() {
         workManager.enqueue(myUploadWork)
     }
 

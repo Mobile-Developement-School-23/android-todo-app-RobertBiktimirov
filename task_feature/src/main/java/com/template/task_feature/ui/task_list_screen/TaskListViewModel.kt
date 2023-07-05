@@ -8,6 +8,7 @@ import com.template.task_feature.domain.usecase.DeleteTodoUseCase
 import com.template.task_feature.domain.usecase.GetTodoListUseCase
 import com.template.task_feature.domain.usecase.LoadTodoListInDbUseCase
 import com.template.task_feature.domain.usecase.UpdateTodoListUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,6 +41,12 @@ class TaskListViewModel @Inject constructor(
     private val _emptinessTodoList = MutableStateFlow(false)
     val emptinessTodoList = _emptinessTodoList.asStateFlow()
 
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            firstLoadTodoListUseCase()
+        }
+
+    }
     fun setIsEmptyList(flag: Boolean) {
         _emptinessTodoList.tryEmit(flag)
     }
