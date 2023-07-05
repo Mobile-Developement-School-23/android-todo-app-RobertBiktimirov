@@ -90,6 +90,12 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             binding.isVisibleDoneTask.isActivated = !binding.isVisibleDoneTask.isActivated
             viewModel.isVisibleDone = binding.isVisibleDoneTask.isActivated
         }
+
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
+            viewModel.updateTodoList()
+        }
     }
 
     private fun observersData() {

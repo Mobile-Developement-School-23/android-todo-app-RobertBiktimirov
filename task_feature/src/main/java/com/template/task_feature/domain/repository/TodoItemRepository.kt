@@ -5,7 +5,7 @@ import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.entity.TodoShell
 import kotlinx.coroutines.flow.Flow
 
-interface TodoItemRepository {
+internal interface TodoItemRepository {
 
     fun getTodoList(): Flow<TodoShell>
 

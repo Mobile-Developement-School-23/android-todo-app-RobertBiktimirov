@@ -17,7 +17,6 @@ data class TodoItemApi(
     @SerialName("last_updated_by") var lastUpdateBy: String
 )
 
-
 @Serializable
 data class TodoListResponse(
     @SerialName("status") val status: String,
@@ -32,8 +31,12 @@ data class TodoResponse(
     @SerialName("revision") var revision: Int = -1
 )
 
-
 @Serializable
 data class TodoBody(
     @SerialName("element") val todoItem: TodoItemApi,
+)
+
+@Serializable
+data class TodoListBody(
+    @SerialName("list") val todoListItem: List<TodoItemApi>,
 )

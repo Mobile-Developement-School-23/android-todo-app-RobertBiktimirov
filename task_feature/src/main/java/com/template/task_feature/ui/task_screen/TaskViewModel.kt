@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
-class TaskViewModel @Inject constructor(
+internal class TaskViewModel @Inject constructor(
     private val deleteTodoUseCase: DeleteTodoUseCase,
     private val saveTodoItemUseCase: SaveTodoItemUseCase,
     private val updateTodoListUseCase: UpdateTodoListUseCase,

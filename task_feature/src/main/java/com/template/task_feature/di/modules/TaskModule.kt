@@ -15,7 +15,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module(includes = [TaskModule.BindModule::class])
-class TaskModule {
+internal class TaskModule {
 
     @TaskScope
     @Provides

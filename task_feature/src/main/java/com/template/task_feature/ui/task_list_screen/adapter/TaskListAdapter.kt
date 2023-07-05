@@ -46,14 +46,11 @@ class TaskListAdapter(
                 isChooseBoxTask.isChecked = todoItem.isCompleted
                 setupDisplayTaskText(this@TaskViewHolder, false, todoItem)
 
-//                binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
-//                    onChooseClickListener(todoItem.copy(isCompleted = isChecked))
-//                    setupDisplayTaskText(this@TaskViewHolder, isChecked, todoItem)
-//                    Log.d("okhttp.OkHttpClient", "from adapter call update")
-//                }
-
                 binding.isChooseBoxTask.setOnClickListener {
-                    Log.d("isChooseBoxTaskTest", binding.isChooseBoxTask.isChecked.toString())
+                    val isChecked = binding.isChooseBoxTask.isChecked
+                    onChooseClickListener(todoItem.copy(isCompleted = isChecked))
+                    setupDisplayTaskText(this@TaskViewHolder, isChecked, todoItem)
+                    Log.d("isChooseBoxTaskTest", isChecked.toString())
                 }
 
                 when (todoItem.importance) {

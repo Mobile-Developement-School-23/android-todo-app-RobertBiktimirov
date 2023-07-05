@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import javax.inject.Inject
 
-class TodoItemRepositoryImpl @Inject constructor(
+internal class TodoItemRepositoryImpl @Inject constructor(
     private val apiSource: ApiSource,
     private val databaseSource: DatabaseSource,
     private val revisionProvider: RevisionProvider
@@ -49,11 +49,16 @@ class TodoItemRepositoryImpl @Inject constructor(
                         }
                     }
                     ViewRequest.DELETE -> {
-                        when (apiSource.deleteTodoApi(request.todoItemEntity.id)) {
+                        when (val answer = apiSource.deleteTodoApi(request.todoItemEntity.id)) {
                             is ApiSuccess -> {
                                 databaseSource.deleteRequest(request)
                             }
-                            else -> {}
+                            is ApiError -> {
+                                if (answer.code == 404) {
+                                    databaseSource.deleteRequest(request)
+                                }
+                            }
+                            is ApiException -> {}
                         }
                     }
                     ViewRequest.SAVE -> {
@@ -168,21 +173,5 @@ class TodoItemRepositoryImpl @Inject constructor(
         }
 
         return todoItem
-    }
-
-
-    private suspend fun loadItemRequest(job: (suspend () -> Response<TodoResponse>)): Int? {
-
-        return when (val apiResult = handleApi { job() }) {
-            is ApiError -> {
-                null
-            }
-            is ApiException -> {
-                null
-            }
-            is ApiSuccess -> {
-                apiResult.data.revision
-            }
-        }
     }
 }

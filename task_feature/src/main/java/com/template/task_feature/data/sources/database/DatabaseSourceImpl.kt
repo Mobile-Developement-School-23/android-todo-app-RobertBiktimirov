@@ -23,7 +23,7 @@ class DatabaseSourceImpl @Inject constructor(
 ) : DatabaseSource {
 
     override fun getListTodoCache(): Flow<TodoShell> {
-        return todoDao.getTodoItems()
+        return todoDao.getTodoItemsFlow()
             .transform { listTodoItem ->
                 emit(listTodoItem.sortedBy { todoItem -> todoItem.internalId })
             }

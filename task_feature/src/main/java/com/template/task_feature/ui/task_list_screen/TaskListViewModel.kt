@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TaskListViewModel @Inject constructor(
+internal class TaskListViewModel @Inject constructor(
     getTodoListUseCase: GetTodoListUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase,
     private val updateTodoListUseCase: UpdateTodoListUseCase,
@@ -51,14 +51,20 @@ class TaskListViewModel @Inject constructor(
         _emptinessTodoList.tryEmit(flag)
     }
 
+    fun updateTodoList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            firstLoadTodoListUseCase()
+        }
+    }
+
     fun updateTodo(todoItem: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             handleUpdateOrSaveResult(updateTodoListUseCase(todoItem))
         }
     }
 
     fun deleteTodo(todoItem: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             handleUpdateOrSaveResult(deleteTodoUseCase(todoItem))
         }
     }
