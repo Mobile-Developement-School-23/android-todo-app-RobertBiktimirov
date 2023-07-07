@@ -1,4 +1,4 @@
-package com.template.todoapp.ui.main_screen.adapter
+package com.template.task_feature.ui.task_list_screen.adapter
 
 import android.content.Context
 import android.graphics.Canvas
@@ -17,6 +17,11 @@ class TaskListTouchHelper(
     private val context: Context,
     private val setupTaskBySwipeImpl: SetupTaskBySwipe
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+
+    interface SetupTaskBySwipe {
+        fun deleteTask(position: Int)
+    }
 
     private val deleteIcon: Drawable =
         ContextCompat.getDrawable(context, R.drawable.white_delete) ?: throwErrorIcon()
@@ -39,8 +44,6 @@ class TaskListTouchHelper(
 
         if (direction == ItemTouchHelper.LEFT) {
             setupTaskBySwipeImpl.deleteTask(position)
-        } else {
-            setupTaskBySwipeImpl.subscribeOnTask(position)
         }
     }
 
@@ -99,11 +102,6 @@ class TaskListTouchHelper(
         }
 
         super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-    }
-
-    interface SetupTaskBySwipe {
-        fun deleteTask(position: Int)
-        fun subscribeOnTask(position: Int)
     }
 
     fun clearState(){

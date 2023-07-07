@@ -37,7 +37,6 @@ class WorkerStart @Inject constructor(
 
     private val onEachLoadNewDataWork = OneTimeWorkRequestBuilder<LoadDataFromBdWorker>()
         .setConstraints(allNetworkConstraints)
-        .setInitialDelay(3L, TimeUnit.MINUTES)
         .setId(onEachLoadNewDataUUID)
         .build()
 
@@ -48,15 +47,11 @@ class WorkerStart @Inject constructor(
 
 
     fun startUpdateDataWorker() {
-        Log.d("testWorkManager", "startUpdateDataWorker")
         workManager.enqueue(onEachUpdateWork)
     }
 
     fun startLoadNewDataFromDb() {
-
-        if (workManager.getWorkInfoById(onEachLoadNewDataUUID).isDone) {
-            workManager.enqueue(onEachLoadNewDataWork)
-        }
+        workManager.enqueue(onEachLoadNewDataWork)
     }
 
     fun startPeriodicUpdateData() {
@@ -66,5 +61,6 @@ class WorkerStart @Inject constructor(
 
     companion object {
         private var onEachLoadNewDataUUID: UUID = UUID.randomUUID()
+
     }
 }

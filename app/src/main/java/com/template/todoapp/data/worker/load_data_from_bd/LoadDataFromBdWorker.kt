@@ -18,8 +18,8 @@ class LoadDataFromBdWorker @AssistedInject constructor(
 
 
     override suspend fun doWork(): Result {
-        Log.d("testWorkManager", "do work LoadDataFromBdWorker")
         return runCatchingNonCancellation {
+            Log.d("ConnectionObserver.StatusTest", "LoadDataFromBdWorker do work")
             updateDataRepository.loadNewDataFromDb()
             Result.success()
         }.getOrElse {

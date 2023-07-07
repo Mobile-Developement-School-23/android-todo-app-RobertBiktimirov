@@ -20,8 +20,7 @@ import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_list_screen.adapter.TaskListAdapter
 import com.template.task_feature.ui.task_navigation.TaskNavigation
 import com.template.task_feature.ui.utlis.showSnackbarNoInternet
-import com.template.todoapp.ui.main_screen.adapter.TaskListTouchHelper
-import kotlinx.coroutines.flow.collect
+import com.template.task_feature.ui.task_list_screen.adapter.TaskListTouchHelper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -101,10 +100,12 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     private fun observersData() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.todoList.collect {
-                    viewModel.setIsEmptyList(it.todoItem.isEmpty())
-                    taskListAdapter.submitList(it.todoItem.toSet().toMutableList())
-                    setCountDoneTask(it.todoItem)
+                viewModel.todoList.collect { todoShell ->
+                    viewModel.setIsEmptyList(todoShell.todoItem.isEmpty())
+                    taskListAdapter.submitList(
+                        todoShell.todoItem
+                    )
+                    setCountDoneTask(todoShell.todoItem)
                 }
             }
         }
@@ -113,11 +114,15 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
             viewModel.emptinessTodoList.collect {
                 binding.viewEmptyList.isVisible = it
                 binding.taskList.isVisible = !it
+            }
+        }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.startAddButtonAnim.collectLatest {
+                viewModel.setStateAnim(false)
                 if (it) {
                     startAnimForAddButton()
                 }
-
             }
         }
 
@@ -207,11 +212,5 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
     override fun deleteTask(position: Int) {
         viewModel.deleteTodo(taskListAdapter.currentList[position])
-    }
-
-    override fun subscribeOnTask(position: Int) {
-        taskListAdapter.mapTodoItem[position]?.isCompleted =
-            !(taskListAdapter.mapTodoItem[position]?.isCompleted ?: false)
-        taskListAdapter.notifyItemChanged(position)
     }
 }

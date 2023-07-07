@@ -1,4 +1,4 @@
-package com.template.todoapp.di
+package com.template.todoapp.di.modules
 
 import android.content.Context
 import com.template.api.RetrofitRepository

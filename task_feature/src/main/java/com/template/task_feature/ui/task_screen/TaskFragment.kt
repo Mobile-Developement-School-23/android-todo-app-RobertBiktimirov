@@ -6,22 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.Snackbar
 import com.template.common.utli.timestampToFormattedDate
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.FragmentTaskBinding
 import com.template.task_feature.di.TaskComponentViewModel
 import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
-import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_navigation.TaskNavigation
+import com.template.task_feature.ui.utlis.getImportanceBySelected
+import com.template.task_feature.ui.utlis.setBgNullErrorText
+import com.template.task_feature.ui.utlis.setImportance
 import com.template.task_feature.ui.utlis.showSnackbarNoInternet
 import com.template.todoapp.ui.task_screen.spinner_adapter.SpinnerAdapter
 import kotlinx.coroutines.launch
@@ -92,15 +92,7 @@ class TaskFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.nullErrorText.collect {
-                if (it) {
-                    binding.editTextTask.background =
-                        ContextCompat.getDrawable(requireContext(), R.drawable.bg_error_input_task)
-                    binding.editTextTask.hint = getString(R.string.hint_error_null_task)
-                } else {
-                    binding.editTextTask.background =
-                        ContextCompat.getDrawable(requireContext(), R.drawable.bg_normal_input_task)
-                    binding.editTextTask.hint = getString(R.string.hint_edit_add_task)
-                }
+                binding.editTextTask.setBgNullErrorText(it)
             }
         }
 
@@ -141,15 +133,10 @@ class TaskFragment : Fragment() {
         }
 
         binding.saveTask.setOnClickListener {
-            val importance = when (binding.importanceSpinner.selectedItemPosition) {
-                0 -> Importance.REGULAR
-                1 -> Importance.LOW
-                2 -> Importance.URGENT
-                else -> {
-                    throw RuntimeException()
-                }
-            }
-            viewModel.saveTask(importance, Calendar.getInstance().timeInMillis)
+            viewModel.saveTask(
+                binding.importanceSpinner.getImportanceBySelected(),
+                Calendar.getInstance().timeInMillis
+            )
         }
 
         binding.closeButton.setOnClickListener {
@@ -178,12 +165,7 @@ class TaskFragment : Fragment() {
         with(binding) {
             editTextTask.setText(todoItem.text)
             viewModel.setTaskText(todoItem.text)
-            when (todoItem.importance) {
-                Importance.REGULAR -> binding.importanceSpinner.setSelection(0)
-                Importance.LOW -> binding.importanceSpinner.setSelection(1)
-                Importance.URGENT -> binding.importanceSpinner.setSelection(2)
-            }
-
+            todoItem.importance.setImportance(binding.importanceSpinner)
             deadlineDate.isVisible = todoItem.deadline != null
             deadlineSwitch.isChecked = todoItem.deadline != null
             viewModel.setDeadline(todoItem.deadline)

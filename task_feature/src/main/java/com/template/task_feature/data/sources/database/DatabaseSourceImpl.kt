@@ -25,7 +25,7 @@ class DatabaseSourceImpl @Inject constructor(
     override fun getListTodoCache(): Flow<TodoShell> {
         return todoDao.getTodoItemsFlow()
             .transform { listTodoItem ->
-                emit(listTodoItem.sortedBy { todoItem -> todoItem.internalId })
+                emit(listTodoItem.sortedBy { todoItem -> todoItem.dateOfCreating }.toSet().toList())
             }
             .map { it.toUi() }
     }
@@ -36,7 +36,6 @@ class DatabaseSourceImpl @Inject constructor(
         }.getOrElse {
             Log.d("error source database", it.message.toString())
         }
-
     }
 
     override suspend fun saveInCacheTodoList(todoItems: List<TodoItem>) {

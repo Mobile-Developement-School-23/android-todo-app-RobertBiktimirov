@@ -8,7 +8,7 @@ fun View.showSnackbarNoInternet(job: (() -> Unit)) {
 
     Snackbar.make(
         this,
-        this.context.getString(R.string.no_internet_by_save),
+        context.getString(R.string.no_internet_by_save),
         Snackbar.LENGTH_INDEFINITE
     ).apply {
         setAction("Ok") {

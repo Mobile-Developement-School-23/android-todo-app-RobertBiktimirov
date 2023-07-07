@@ -9,10 +9,7 @@ import com.template.task_feature.domain.usecase.GetTodoListUseCase
 import com.template.task_feature.domain.usecase.LoadTodoListInDbUseCase
 import com.template.task_feature.domain.usecase.UpdateTodoListUseCase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,13 +23,16 @@ internal class TaskListViewModel @Inject constructor(
     private val _noInternet = MutableStateFlow(false)
     val noInternet get() = _noInternet.asStateFlow()
 
+    private val _startAddButtonAnim = MutableStateFlow(true)
+    val startAddButtonAnim = _startAddButtonAnim.asStateFlow()
+
     var isVisibleDone: Boolean = false
         set(value) {
             field = value
             _isVisibleDoneTask.tryEmit(value)
         }
 
-    val todoList = getTodoListUseCase()
+    val todoList: StateFlow<TodoShell> = getTodoListUseCase()
         .stateIn(viewModelScope, SharingStarted.Lazily, TodoShell.toEmpty())
 
     private val _isVisibleDoneTask: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -45,8 +45,13 @@ internal class TaskListViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             firstLoadTodoListUseCase()
         }
-
     }
+
+
+    fun setStateAnim(flag: Boolean){
+        _startAddButtonAnim.tryEmit(flag)
+    }
+
     fun setIsEmptyList(flag: Boolean) {
         _emptinessTodoList.tryEmit(flag)
     }

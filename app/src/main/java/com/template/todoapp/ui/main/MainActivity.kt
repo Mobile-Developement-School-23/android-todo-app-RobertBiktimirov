@@ -2,6 +2,7 @@ package com.template.todoapp.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,6 @@ import com.template.todoapp.ui.network_callback.observer.ConnectionObserver
 import com.template.todoapp.ui.services.factory.CreateWorkerFactory
 import com.template.todoapp.ui.services.factory.WorkerStart
 import com.template.todoapp.ui.yandex.YandexSignUpJob
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.template.resourses_module.R as resR
@@ -57,11 +57,6 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         startYandexSignUp()
     }
 
-    override fun onStart() {
-        super.onStart()
-
-    }
-
     private fun startYandexSignUp() {
         yandexLauncher(yandexSignUpActivity.getYandexIntent(intent)) {
             yandexSignUpActivity.registerYandexSignUp(
@@ -77,12 +72,23 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         updateDataWorkerStart.startUpdateDataWorker()
 
         lifecycleScope.launch {
-            connectivityObserver.observe().collectLatest {
+            connectivityObserver.observe().collect {
                 when (it) {
                     ConnectionObserver.Status.Available -> {
-                        updateDataWorkerStart.startLoadNewDataFromDb()
+                        connectivityObserver.lastState?.let { status ->
+                            if (status == ConnectionObserver.Status.Lost) {
+                                updateDataWorkerStart.startLoadNewDataFromDb()
+                                Toast.makeText(
+                                    applicationContext,
+                                    "start work manager",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
-                    ConnectionObserver.Status.Lost -> {}
+                    ConnectionObserver.Status.Lost -> {
+                        connectivityObserver.lastState = ConnectionObserver.Status.Lost
+                    }
                 }
             }
         }

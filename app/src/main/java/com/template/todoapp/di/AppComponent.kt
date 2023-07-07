@@ -5,6 +5,7 @@ import com.template.api.services.TodoService
 import com.template.database.AppDatabase
 import com.template.task_feature.di.deps.TaskDeps
 import com.template.todoapp.app.TodoApplication
+import com.template.todoapp.di.modules.AppModule
 import com.template.todoapp.ui.main.MainActivity
 import dagger.BindsInstance
 import dagger.Component
