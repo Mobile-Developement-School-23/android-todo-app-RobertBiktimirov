@@ -5,4 +5,6 @@ interface TaskNavigation {
     fun onBack()
     fun goTaskFragment(todoId: String?)
 
+    fun goSettingFragment()
+
 }

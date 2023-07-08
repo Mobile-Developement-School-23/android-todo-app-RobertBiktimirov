@@ -1,7 +1,7 @@
 package com.template.todoapp.di
 
 import android.content.Context
-import com.template.api.services.TodoService
+import com.template.api.services.TaskService
 import com.template.database.AppDatabase
 import com.template.task_feature.di.deps.TaskDeps
 import com.template.todoapp.app.TodoApplication
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 interface AppComponent : TaskDeps {
 
     override val database: AppDatabase
-    override val todoService: TodoService
+    override val todoService: TaskService
     override val context: Context
 
     fun inject(mainActivity: MainActivity)

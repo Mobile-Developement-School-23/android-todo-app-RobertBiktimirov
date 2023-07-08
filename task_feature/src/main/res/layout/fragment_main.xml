@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/back_primary"
+    android:id="@+id/task_list_body"
     tools:context="com.template.task_feature.ui.task_list_screen.TaskListFragment">
 
     <com.google.android.material.appbar.AppBarLayout

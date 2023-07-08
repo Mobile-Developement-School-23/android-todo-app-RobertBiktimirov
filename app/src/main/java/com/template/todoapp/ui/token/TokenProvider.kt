@@ -3,6 +3,12 @@ package com.template.todoapp.ui.token
 import android.content.Context
 import android.content.SharedPreferences
 import com.template.api.ApiTokenProvider
+import com.template.api.ApiTokenProvider.Companion.token
+import com.yandex.authsdk.YandexAuthSdk
+import com.yandex.authsdk.YandexAuthToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.template.resourses_module.R as resourceModule
 
@@ -18,14 +24,24 @@ class TokenProvider @Inject constructor(val context: Context) {
     fun getToken(): String? =
         sharedPreferences.getString(context.getString(resourceModule.string.key_sp_token), null)
 
-    fun saveToken(token: String, lambdaStartFragment: (() -> Unit)) {
+    fun saveToken(
+        token: YandexAuthToken,
+        yandexAuthSdk: YandexAuthSdk,
+        lambdaStartFragment: (() -> Unit)
+    ) {
 
-        with(sharedPreferences.edit()) {
-            putString(context.getString(resourceModule.string.key_sp_token), token)
-            commit()
+        CoroutineScope(Dispatchers.IO).launch {
+            with(sharedPreferences.edit()) {
+                putString(context.getString(resourceModule.string.key_sp_token), token.value)
+                putString(
+                    context.getString(resourceModule.string.key_sp_jwt_token),
+                    yandexAuthSdk.getJwt(token)
+                )
+                apply()
+            }
         }
 
-        setToken(token, lambdaStartFragment)
+        setToken(token.value, lambdaStartFragment)
     }
 
 

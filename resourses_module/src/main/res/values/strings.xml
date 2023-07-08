@@ -26,6 +26,7 @@
 
     <string name="name_toke_shared_preference">shared_preference_yandex_token</string>
     <string name="key_sp_token">tokenName</string>
+    <string name="key_sp_jwt_token">JwtTokenName</string>
 
     <string name="name_revision_shared_preference">shared_preference_revision_api</string>
     <string name="key_sp_revision">revision_api</string>

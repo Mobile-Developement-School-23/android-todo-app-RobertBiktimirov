@@ -2,7 +2,7 @@ package com.template.task_feature.data.sources.api
 
 import com.template.api.entity.TodoListResponse
 import com.template.api.entity.TodoResponse
-import com.template.api.services.TodoService
+import com.template.api.services.TaskService
 import com.template.common.utli.ApiResult
 import com.template.common.utli.handleApi
 import com.template.task_feature.data.mappers.toBody
@@ -11,7 +11,7 @@ import com.template.task_feature.domain.entity.TodoItem
 import javax.inject.Inject
 
 class ApiSourceImpl @Inject constructor(
-    private val todoService: TodoService,
+    private val todoService: TaskService,
     private val revisionProvider: RevisionProvider
 ) : ApiSource {
 

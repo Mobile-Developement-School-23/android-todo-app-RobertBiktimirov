@@ -11,6 +11,7 @@
         android:id="@+id/item_task_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         tools:context=".ui.task_screen.TaskFragment">
 
         <ProgressBar

@@ -2,7 +2,7 @@ package com.template.todoapp.di.modules
 
 import android.content.Context
 import com.template.api.RetrofitRepository
-import com.template.api.services.TodoService
+import com.template.api.services.TaskService
 import com.template.database.AppDatabase
 import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
@@ -32,6 +32,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideTodoServise(context: Context): TodoService = RetrofitRepository(context).api
+    fun provideTodoServise(context: Context): TaskService = RetrofitRepository(context).taskApi
 
 }

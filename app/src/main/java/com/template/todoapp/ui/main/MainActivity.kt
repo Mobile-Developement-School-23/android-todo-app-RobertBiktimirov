@@ -17,8 +17,13 @@ import com.template.todoapp.ui.network_callback.NetworkConnectivityObserver
 import com.template.todoapp.ui.network_callback.observer.ConnectionObserver
 import com.template.todoapp.ui.services.factory.CreateWorkerFactory
 import com.template.todoapp.ui.services.factory.WorkerStart
+import com.template.todoapp.ui.token.TokenProvider
 import com.template.todoapp.ui.yandex.YandexSignUpJob
+import com.yandex.authsdk.YandexAuthSdk
+import com.yandex.authsdk.YandexAuthToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import javax.inject.Inject
 import com.template.resourses_module.R as resR
 import com.template.todoapp.R as mainR
@@ -30,6 +35,9 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
 
     @Inject
     lateinit var yandexSignUpActivity: YandexSignUpJob
+
+    @Inject
+    lateinit var tokenProvider: TokenProvider
 
     @Inject
     lateinit var updateDataWorkerFactory: CreateWorkerFactory
@@ -51,6 +59,9 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
 
+
+
+
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -58,6 +69,7 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
     }
 
     private fun startYandexSignUp() {
+
         yandexLauncher(yandexSignUpActivity.getYandexIntent(intent)) {
             yandexSignUpActivity.registerYandexSignUp(
                 it,
@@ -123,6 +135,10 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
             .add(mainR.id.main_fragment_container_view, TaskFragment.getNewInstance(todoId))
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun goSettingFragment() {
+        TODO("Not yet implemented")
     }
 
     override fun onDestroy() {

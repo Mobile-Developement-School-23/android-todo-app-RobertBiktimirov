@@ -4,7 +4,7 @@ import android.content.Context
 import com.template.api.entity.TodoBody
 import com.template.api.entity.TodoItemApi
 import com.template.api.entity.TodoResponse
-import com.template.api.services.TodoService
+import com.template.api.services.TaskService
 import com.template.common.utli.*
 import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
@@ -20,7 +20,7 @@ import com.template.resourses_module.R as resR
 class MainRepository @Inject constructor(
     private val todoDao: TodoDao,
     private val requestDao: RequestDao,
-    private val todoService: TodoService,
+    private val todoService: TaskService,
     private val context: Context
 ) {
 

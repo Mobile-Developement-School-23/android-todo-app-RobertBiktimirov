@@ -4,7 +4,8 @@ import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.template.api.interceptors.AuthInterceptor
 import com.template.api.interceptors.CacheInterceptor
-import com.template.api.services.TodoService
+import com.template.api.services.TaskService
+import com.template.api.services.YandexAccountService
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Cache
@@ -18,7 +19,8 @@ import java.util.concurrent.TimeUnit
 class RetrofitRepository(context: Context) {
 
     companion object {
-        private const val BASE_URL = "https://beta.mrdekk.ru/todobackend/"
+        private const val TASK_BASE_URL = "https://beta.mrdekk.ru/todobackend/"
+        private const val YANDEX_ACCOUNT_BASE_URL = "https://login.yandex.ru/"
         private const val CONNECT_TIME = 5000L
         private const val WRITE_TIME = 5000L
         private const val READE_TIME = 5000L
@@ -41,13 +43,21 @@ class RetrofitRepository(context: Context) {
         .readTimeout(READE_TIME, TimeUnit.SECONDS)
         .build()
 
-    private val retrofit = Retrofit.Builder()
+    private val taskRetrofit = Retrofit.Builder()
         .client(okHttpClient)
-        .baseUrl(BASE_URL)
+        .baseUrl(TASK_BASE_URL)
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
+
+    private val yandexAccountRetrofit = Retrofit.Builder()
+        .client(okHttpClient)
+        .baseUrl(YANDEX_ACCOUNT_BASE_URL)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 
 
-    val api: TodoService = retrofit.create(TodoService::class.java)
+    val taskApi: TaskService = taskRetrofit.create(TaskService::class.java)
+    val yandexAccountService: YandexAccountService =
+        taskRetrofit.create(YandexAccountService::class.java)
 
 }
