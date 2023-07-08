@@ -36,7 +36,7 @@ data class YandexAccountApi(
     @SerialName("login") val login: String,
     @SerialName("default_email") val email: String,
     @SerialName("birthday") val birthday: String,
-    @SerialName("default_avatar_id") var avatarId: Long,
+    @SerialName("default_avatar_id") var avatarId: String,
     @SerialName("default_phone") val phoneInfo: PhoneInfoApi,
 )
 

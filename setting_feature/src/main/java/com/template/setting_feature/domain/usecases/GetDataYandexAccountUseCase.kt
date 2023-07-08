@@ -6,4 +6,5 @@ import javax.inject.Inject
 class GetDataYandexAccountUseCase @Inject constructor(
     private val settingRepository: SettingRepository
 ) {
+    suspend operator fun invoke() = settingRepository.getDataYandexAccount()
 }

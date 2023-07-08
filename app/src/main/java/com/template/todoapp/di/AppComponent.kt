@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [AppModule::class]
+    modules = [AppModule::class, ViewModelModule::class]
 )
 interface AppComponent : TaskDeps, SettingDeps {
 

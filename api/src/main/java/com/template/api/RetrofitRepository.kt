@@ -58,6 +58,6 @@ class RetrofitRepository(context: Context) {
 
     val taskApi: TaskService = taskRetrofit.create(TaskService::class.java)
     val yandexAccountService: YandexAccountService =
-        taskRetrofit.create(YandexAccountService::class.java)
+        yandexAccountRetrofit.create(YandexAccountService::class.java)
 
 }

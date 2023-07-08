@@ -5,6 +5,6 @@ data class YandexAccountEntity(
     val login: String,
     val email: String,
     val birthday: String,
-    var avatarId: Long,
-    val number: String,
+    var avatarId: String,
+    val phone: String,
 )

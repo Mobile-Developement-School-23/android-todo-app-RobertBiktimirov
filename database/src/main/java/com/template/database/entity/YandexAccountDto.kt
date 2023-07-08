@@ -10,6 +10,6 @@ data class YandexAccountDto(
     @ColumnInfo("login") val login: String,
     @PrimaryKey @ColumnInfo("default_email") val email: String,
     @ColumnInfo("birthday") val birthday: String,
-    @ColumnInfo("default_avatar_id") var avatarId: Long,
+    @ColumnInfo("default_avatar_id") var avatarId: String,
     @ColumnInfo("default_phone") val phone: String,
 )

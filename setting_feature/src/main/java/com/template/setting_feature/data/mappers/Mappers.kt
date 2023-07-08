@@ -21,3 +21,13 @@ fun YandexAccountDto.toEntity(): YandexAccountEntity = YandexAccountEntity(
     avatarId,
     phone
 )
+
+
+fun YandexAccountEntity.toDto(): YandexAccountDto = YandexAccountDto(
+    name,
+    login,
+    email,
+    birthday,
+    avatarId,
+    phone
+)

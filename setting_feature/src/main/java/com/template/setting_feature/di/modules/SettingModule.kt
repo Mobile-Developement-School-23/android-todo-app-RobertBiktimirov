@@ -13,7 +13,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 
-@Module
+@Module(includes = [SettingModule.BindModule::class])
 class SettingModule {
 
 

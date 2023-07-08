@@ -10,7 +10,7 @@ import com.template.database.entity.YandexAccountDto
 interface YandexAccountDao {
 
     @Query("select * from yandex_account")
-    suspend fun getDataYandexAccountCache(): YandexAccountDto
+    suspend fun getDataYandexAccountCache(): YandexAccountDto?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setYandexAccount(yandexAccountDto: YandexAccountDto)

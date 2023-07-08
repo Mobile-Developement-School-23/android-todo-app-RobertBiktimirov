@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.template.setting_feature.ui.SettingFragment
 import com.template.task_feature.ui.task_list_screen.TaskListFragment
 import com.template.task_feature.ui.task_navigation.TaskNavigation
 import com.template.task_feature.ui.task_screen.TaskFragment
@@ -138,7 +139,16 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
     }
 
     override fun goSettingFragment() {
-        TODO("Not yet implemented")
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                resR.anim.slide_in,
+                resR.anim.fade_out,
+                resR.anim.fade_in,
+                resR.anim.slide_out
+            )
+            .addToBackStack(null)
+            .add(mainR.id.main_fragment_container_view, SettingFragment())
+            .commit()
     }
 
     override fun onDestroy() {

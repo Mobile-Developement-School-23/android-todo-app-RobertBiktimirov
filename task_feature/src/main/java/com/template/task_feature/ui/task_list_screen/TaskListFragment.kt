@@ -76,6 +76,9 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
 
     private fun respondToView() {
 
+        binding.settingButton.setOnClickListener {
+            navigation?.goSettingFragment()
+        }
 
         binding.addTaskButton.setOnLongClickListener {
             startAnimForAddButton()
