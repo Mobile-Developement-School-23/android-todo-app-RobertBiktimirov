@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import com.template.setting_feature.di.deps.SettingDepsStore
 import com.template.task_feature.di.deps.TaskDepsStore
 import com.template.todoapp.di.AppComponent
 import com.template.todoapp.di.DaggerAppComponent
@@ -38,6 +39,7 @@ class TodoApplication : Application() {
 
 
         TaskDepsStore.deps = appComponent
+        SettingDepsStore.deps = appComponent
 
         WorkManager.initialize(this, configurationWorker)
     }

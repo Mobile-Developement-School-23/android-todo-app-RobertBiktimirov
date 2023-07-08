@@ -1,22 +1,23 @@
 package com.template.task_feature.data.repository
 
 import android.util.Log
-import com.template.api.entity.TodoResponse
 import com.template.common.utli.ApiError
 import com.template.common.utli.ApiException
 import com.template.common.utli.ApiSuccess
-import com.template.common.utli.handleApi
+import com.template.common.utli.RepositoryError
+import com.template.common.utli.RepositoryException
+import com.template.common.utli.RepositoryResult
+import com.template.common.utli.RepositorySuccess
 import com.template.database.entity.ViewRequest
-import com.template.task_feature.data.mappers.toBody
 import com.template.task_feature.data.mappers.toEntity
 import com.template.task_feature.data.mappers.toUi
 import com.template.task_feature.data.sources.api.ApiSource
 import com.template.task_feature.data.sources.database.DatabaseSource
 import com.template.task_feature.data.sources.revision.RevisionProvider
-import com.template.task_feature.domain.entity.*
+import com.template.task_feature.domain.entity.TodoItem
+import com.template.task_feature.domain.entity.TodoShell
 import com.template.task_feature.domain.repository.TodoItemRepository
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 import javax.inject.Inject
 
 internal class TodoItemRepositoryImpl @Inject constructor(

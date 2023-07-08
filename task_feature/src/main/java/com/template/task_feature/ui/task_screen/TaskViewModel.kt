@@ -3,16 +3,20 @@ package com.template.task_feature.ui.task_screen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.template.task_feature.domain.entity.*
+import com.template.common.utli.RepositoryError
+import com.template.common.utli.RepositoryException
+import com.template.common.utli.RepositoryResult
+import com.template.common.utli.RepositorySuccess
+import com.template.task_feature.domain.entity.Importance
+import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.usecase.DeleteTodoUseCase
 import com.template.task_feature.domain.usecase.GetTodoItemUseCase
 import com.template.task_feature.domain.usecase.SaveTodoItemUseCase
 import com.template.task_feature.domain.usecase.UpdateTodoListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 internal class TaskViewModel @Inject constructor(

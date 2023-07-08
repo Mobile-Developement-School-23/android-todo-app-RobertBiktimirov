@@ -3,13 +3,14 @@ package com.template.setting_feature.di.deps
 import android.content.Context
 import androidx.annotation.RestrictTo
 import com.template.api.services.TaskService
+import com.template.api.services.YandexAccountService
 import com.template.database.AppDatabase
 import kotlin.properties.Delegates
 
 interface SettingDeps {
 
     val database: AppDatabase
-    val todoService: TaskService
+    val yandexAccountService: YandexAccountService
     val context: Context
 }
 

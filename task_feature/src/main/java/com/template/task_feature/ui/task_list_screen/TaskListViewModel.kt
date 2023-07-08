@@ -3,13 +3,22 @@ package com.template.task_feature.ui.task_list_screen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.template.task_feature.domain.entity.*
+import com.template.common.utli.RepositoryError
+import com.template.common.utli.RepositoryException
+import com.template.common.utli.RepositoryResult
+import com.template.common.utli.RepositorySuccess
+import com.template.task_feature.domain.entity.TodoItem
+import com.template.task_feature.domain.entity.TodoShell
 import com.template.task_feature.domain.usecase.DeleteTodoUseCase
 import com.template.task_feature.domain.usecase.GetTodoListUseCase
 import com.template.task_feature.domain.usecase.LoadTodoListInDbUseCase
 import com.template.task_feature.domain.usecase.UpdateTodoListUseCase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

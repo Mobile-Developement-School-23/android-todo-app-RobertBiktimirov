@@ -32,7 +32,8 @@
                 android:id="@+id/avatar_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left|top"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginLeft="50dp"
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/ic_launcher_foreground"/>
 

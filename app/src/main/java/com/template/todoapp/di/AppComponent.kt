@@ -2,7 +2,9 @@ package com.template.todoapp.di
 
 import android.content.Context
 import com.template.api.services.TaskService
+import com.template.api.services.YandexAccountService
 import com.template.database.AppDatabase
+import com.template.setting_feature.di.deps.SettingDeps
 import com.template.task_feature.di.deps.TaskDeps
 import com.template.todoapp.app.TodoApplication
 import com.template.todoapp.di.modules.AppModule
@@ -15,11 +17,12 @@ import javax.inject.Singleton
 @Component(
     modules = [AppModule::class]
 )
-interface AppComponent : TaskDeps {
+interface AppComponent : TaskDeps, SettingDeps {
 
     override val database: AppDatabase
     override val todoService: TaskService
     override val context: Context
+    override val yandexAccountService: YandexAccountService
 
     fun inject(mainActivity: MainActivity)
     fun inject(application: TodoApplication)

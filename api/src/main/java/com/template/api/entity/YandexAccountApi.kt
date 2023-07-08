@@ -37,10 +37,10 @@ data class YandexAccountApi(
     @SerialName("default_email") val email: String,
     @SerialName("birthday") val birthday: String,
     @SerialName("default_avatar_id") var avatarId: Long,
-    @SerialName("default_phone") val phoneInfo: PhoneInfo,
+    @SerialName("default_phone") val phoneInfo: PhoneInfoApi,
 )
 
 @kotlinx.serialization.Serializable
-data class PhoneInfo(
+data class PhoneInfoApi(
     @SerialName("number") val number: String
 )
