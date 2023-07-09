@@ -176,7 +176,7 @@
             android:gravity="center_vertical"
             android:minHeight="48dp"
             android:text="@string/delete_text"
-            android:textColor="@color/red"
+            android:textColor="@drawable/bg_deleta_task_text"
             android:textSize="16sp"
             android:textStyle="bold"
             app:drawableLeftCompat="@drawable/delete"

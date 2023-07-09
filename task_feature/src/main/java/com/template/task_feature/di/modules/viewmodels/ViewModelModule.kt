@@ -13,8 +13,6 @@ import dagger.multibindings.IntoMap
 @Module
 internal interface ViewModelModule {
 
-    @Binds
-    fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 
     @Binds
     @IntoMap

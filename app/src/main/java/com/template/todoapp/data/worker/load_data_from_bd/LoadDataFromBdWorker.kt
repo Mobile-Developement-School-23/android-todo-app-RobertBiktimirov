@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.template.common.utli.runCatchingNonCancellation
-import com.template.todoapp.data.MainRepository
+import com.template.todoapp.data.MainRepositoryImpl
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -13,7 +13,7 @@ import dagger.assisted.AssistedInject
 class LoadDataFromBdWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val workerParameters: WorkerParameters,
-    private val updateDataRepository: MainRepository
+    private val updateDataRepository: MainRepositoryImpl
 ) : CoroutineWorker(context, workerParameters) {
 
 

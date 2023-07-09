@@ -9,18 +9,21 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.FragmentMainBinding
 import com.template.task_feature.di.TaskComponentViewModel
-import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_list_screen.adapter.TaskListAdapter
+import com.template.task_feature.ui.task_list_screen.adapter.TaskListTouchHelper
 import com.template.task_feature.ui.task_navigation.TaskNavigation
 import com.template.task_feature.ui.utlis.showSnackbarNoInternet
-import com.template.task_feature.ui.task_list_screen.adapter.TaskListTouchHelper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,7 +36,7 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     private var navigation: TaskNavigation? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelFactory)[TaskListViewModel::class.java]

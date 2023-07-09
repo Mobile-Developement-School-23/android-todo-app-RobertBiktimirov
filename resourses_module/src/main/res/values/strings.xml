@@ -31,6 +31,9 @@
     <string name="name_revision_shared_preference">shared_preference_revision_api</string>
     <string name="key_sp_revision">revision_api</string>
 
+
+    <string name="name_datastore_theme">theme_data_store_name</string>
+
     <string name="no_internet_by_save">У вас отсутствует интернет. Изменения могут не сохраниться</string>
 
 

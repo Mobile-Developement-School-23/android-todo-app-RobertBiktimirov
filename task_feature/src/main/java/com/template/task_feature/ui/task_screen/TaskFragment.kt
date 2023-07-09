@@ -16,7 +16,6 @@ import com.template.common.utli.timestampToFormattedDate
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.FragmentTaskBinding
 import com.template.task_feature.di.TaskComponentViewModel
-import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_navigation.TaskNavigation
 import com.template.task_feature.ui.utlis.getImportanceBySelected
@@ -25,7 +24,8 @@ import com.template.task_feature.ui.utlis.setImportance
 import com.template.task_feature.ui.utlis.showSnackbarNoInternet
 import com.template.todoapp.ui.task_screen.spinner_adapter.SpinnerAdapter
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
+import java.util.GregorianCalendar
 import javax.inject.Inject
 
 class TaskFragment : Fragment() {
@@ -34,7 +34,7 @@ class TaskFragment : Fragment() {
     private val binding get() = _binding ?: throw RuntimeException("binding not must be null")
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]

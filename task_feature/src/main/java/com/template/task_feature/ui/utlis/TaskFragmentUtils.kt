@@ -40,3 +40,18 @@ fun EditText.setBgNullErrorText(flag: Boolean) {
         hint = context.getString(R.string.hint_edit_add_task)
     }
 }
+
+
+fun Importance.toScreenString(): String {
+    return when(this) {
+        Importance.LOW -> {
+            "Низкий"
+        }
+        Importance.REGULAR -> {
+            "Нет"
+        }
+        Importance.URGENT -> {
+            "!! Высокий"
+        }
+    }
+}

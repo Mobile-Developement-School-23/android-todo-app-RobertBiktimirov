@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.template.setting_feature.ui.SettingFragment
 import com.template.task_feature.ui.task_list_screen.TaskListFragment
@@ -14,6 +15,7 @@ import com.template.task_feature.ui.task_navigation.TaskNavigation
 import com.template.task_feature.ui.task_screen.TaskFragment
 import com.template.todoapp.app.appComponent
 import com.template.todoapp.databinding.ActivityMainBinding
+import com.template.todoapp.di.ViewModelFactory
 import com.template.todoapp.ui.network_callback.NetworkConnectivityObserver
 import com.template.todoapp.ui.network_callback.observer.ConnectionObserver
 import com.template.todoapp.ui.services.factory.CreateWorkerFactory
@@ -50,6 +52,14 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         NetworkConnectivityObserver(this)
     }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+    }
+
     private fun yandexLauncher(intent: Intent, job: ((it: ActivityResult) -> Unit)) =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             job(it)
@@ -59,9 +69,7 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-
-
-
+        
 
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

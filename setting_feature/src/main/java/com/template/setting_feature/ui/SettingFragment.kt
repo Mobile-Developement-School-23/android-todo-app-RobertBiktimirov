@@ -15,7 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.template.setting_feature.databinding.FragmentSettingBinding
 import com.template.setting_feature.di.SettingComponentViewModel
-import com.template.setting_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.setting_feature.domain.entity.YandexAccountEntity
 import com.template.setting_feature.ui.utils.toAvatarUrl
 import kotlinx.coroutines.flow.collectLatest
@@ -28,7 +27,7 @@ class SettingFragment : Fragment() {
     val binding get() = _binding ?: throw RuntimeException("binding not must be null")
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
 
     private val viewmodel by lazy {

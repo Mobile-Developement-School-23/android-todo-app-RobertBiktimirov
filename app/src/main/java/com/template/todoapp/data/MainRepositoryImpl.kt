@@ -13,16 +13,19 @@ import com.template.database.entity.ViewRequest
 import com.template.task_feature.data.mappers.*
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
+import com.template.todoapp.data.themeProvider.ThemeProvider
+import com.template.todoapp.domain.repository.MainRepository
 import retrofit2.Response
 import javax.inject.Inject
 import com.template.resourses_module.R as resR
 
-class MainRepository @Inject constructor(
+class MainRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao,
     private val requestDao: RequestDao,
     private val todoService: TaskService,
-    private val context: Context
-) {
+    private val context: Context,
+    private val themeProvider: ThemeProvider
+): MainRepository {
 
     private val sharedPreferences =
         context.getSharedPreferences(

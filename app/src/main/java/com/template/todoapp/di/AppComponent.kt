@@ -1,6 +1,7 @@
 package com.template.todoapp.di
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import com.template.api.services.TaskService
 import com.template.api.services.YandexAccountService
 import com.template.database.AppDatabase
@@ -23,6 +24,7 @@ interface AppComponent : TaskDeps, SettingDeps {
     override val todoService: TaskService
     override val context: Context
     override val yandexAccountService: YandexAccountService
+    override val viewModelFactory: ViewModelProvider.Factory
 
     fun inject(mainActivity: MainActivity)
     fun inject(application: TodoApplication)
