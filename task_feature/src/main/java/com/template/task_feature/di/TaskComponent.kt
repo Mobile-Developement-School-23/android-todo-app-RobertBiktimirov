@@ -3,6 +3,7 @@ package com.template.task_feature.di
 import androidx.lifecycle.ViewModel
 import com.template.task_feature.di.deps.TaskDeps
 import com.template.task_feature.di.deps.TaskDepsProvider
+import com.template.task_feature.di.modules.TaskListFragmentComponent
 import com.template.task_feature.di.modules.TaskModule
 import com.template.task_feature.di.modules.viewmodels.ViewModelModule
 import com.template.task_feature.ui.task_list_screen.TaskListFragment
@@ -16,6 +17,8 @@ internal interface TaskComponent {
 
     fun inject(taskListFragment: TaskListFragment)
     fun inject(taskFragment: TaskFragment)
+
+    fun fragmentComponentBuilder(): TaskListFragmentComponent.Builder
 
     @Component.Builder
     interface Builder {
