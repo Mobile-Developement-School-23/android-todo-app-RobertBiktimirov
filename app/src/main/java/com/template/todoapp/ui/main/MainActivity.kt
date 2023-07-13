@@ -6,7 +6,9 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.template.setting_feature.ui.SettingFragment
@@ -15,18 +17,14 @@ import com.template.task_feature.ui.task_navigation.TaskNavigation
 import com.template.task_feature.ui.task_screen.TaskFragment
 import com.template.todoapp.app.appComponent
 import com.template.todoapp.databinding.ActivityMainBinding
-import com.template.todoapp.di.ViewModelFactory
+import com.template.todoapp.domain.entity.ThemeEnum
 import com.template.todoapp.ui.network_callback.NetworkConnectivityObserver
 import com.template.todoapp.ui.network_callback.observer.ConnectionObserver
 import com.template.todoapp.ui.services.factory.CreateWorkerFactory
 import com.template.todoapp.ui.services.factory.WorkerStart
 import com.template.todoapp.ui.token.TokenProvider
 import com.template.todoapp.ui.yandex.YandexSignUpJob
-import com.yandex.authsdk.YandexAuthSdk
-import com.yandex.authsdk.YandexAuthToken
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
 import javax.inject.Inject
 import com.template.resourses_module.R as resR
 import com.template.todoapp.R as mainR
@@ -60,33 +58,23 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
     }
 
-    private fun yandexLauncher(intent: Intent, job: ((it: ActivityResult) -> Unit)) =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            job(it)
-        }.launch(intent)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-        
-
         _binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
         startYandexSignUp()
+        setContentView(binding.root)
     }
 
-    private fun startYandexSignUp() {
-
-        yandexLauncher(yandexSignUpActivity.getYandexIntent(intent)) {
+    private fun startYandexSignUp() = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             yandexSignUpActivity.registerYandexSignUp(
                 it,
                 { handlerStartWorkFragment() },
                 { handleErrorInYandex() }
             )
-        }
-    }
+        }.launch(yandexSignUpActivity.getYandexIntent(intent))
+
 
     private fun handlerStartWorkFragment() {
         binding.signUpButton.isVisible = false
@@ -97,18 +85,30 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
                 when (it) {
                     ConnectionObserver.Status.Available -> {
                         connectivityObserver.lastState?.let { status ->
-                            if (status == ConnectionObserver.Status.Lost) {
-                                updateDataWorkerStart.startLoadNewDataFromDb()
-                                Toast.makeText(
-                                    applicationContext,
-                                    "start work manager",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
                         }
                     }
+
                     ConnectionObserver.Status.Lost -> {
                         connectivityObserver.lastState = ConnectionObserver.Status.Lost
+                    }
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            viewModel.themeFlow.collect {
+                when (it) {
+                    ThemeEnum.DARK -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+
+                    ThemeEnum.DAY -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+
+                    ThemeEnum.SYSTEM -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                     }
                 }
             }
@@ -123,9 +123,6 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
     private fun handleErrorInYandex() {
         binding.signUpButton.apply {
             isVisible = true
-            setOnClickListener {
-                startYandexSignUp()
-            }
         }
     }
 

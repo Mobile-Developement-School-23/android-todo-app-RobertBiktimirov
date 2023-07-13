@@ -1,4 +1,4 @@
-package com.template.task_feature.ui.task_fragment_compose.ui.theme
+package com.template.task_feature.ui.task_screen.compose_views.ui_theme
 
 import android.app.Activity
 import android.os.Build
@@ -48,7 +48,6 @@ val lightExtendedColors = ExtendedColors(
     backElevated = LightBackElevated,
     backBlueText = LightBlueTextColor,
     backRedColor = LightRedTextColor
-
 )
 
 val darkExtendedColors = ExtendedColors(

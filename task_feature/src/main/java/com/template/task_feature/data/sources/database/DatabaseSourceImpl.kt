@@ -10,6 +10,7 @@ import com.template.database.entity.ViewRequest
 import com.template.task_feature.data.mappers.toDto
 import com.template.task_feature.data.mappers.toEntity
 import com.template.task_feature.data.mappers.toUi
+import com.template.task_feature.data.setup_notification.AlarmScheduler
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.entity.TodoShell
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 class DatabaseSourceImpl @Inject constructor(
     private val todoDao: TodoDao,
-    private val requestDao: RequestDao
+    private val requestDao: RequestDao,
+    private val alarmScheduler: AlarmScheduler
 ) : DatabaseSource {
 
     override fun getListTodoCache(): Flow<TodoShell> {
@@ -33,9 +35,11 @@ class DatabaseSourceImpl @Inject constructor(
     override suspend fun saveInCacheTodoItem(todoItem: TodoItem) {
         runCatchingNonCancellation {
             todoDao.saveTodoItem(todoItem.toEntity())
+            alarmScheduler.schedule(todoItem)
         }.getOrElse {
             Log.d("error source database", it.message.toString())
         }
+
     }
 
     override suspend fun saveInCacheTodoList(todoItems: List<TodoItem>) {
@@ -43,6 +47,10 @@ class DatabaseSourceImpl @Inject constructor(
             val items = todoItems.toEntity()
             todoDao.deleteAll()
             todoDao.saveTodoList(items)
+
+            todoItems.forEach {
+                alarmScheduler.schedule(it)
+            }
         }.getOrElse {
             Log.d("error source database", it.message.toString())
         }
@@ -58,15 +66,20 @@ class DatabaseSourceImpl @Inject constructor(
                 todoItem.dateOfEditing,
                 todoItem.id
             )
+
+            alarmScheduler.schedule(todoItem)
         }
     }
 
-    override suspend fun deleteTodoCache(todoId: String) {
+    override suspend fun deleteTodoCache(todoItem: TodoItem) {
         runCatchingNonCancellation {
-            todoDao.deleteTodoItem(todoId)
+            todoDao.deleteTodoItem(todoItem.id)
+
+            alarmScheduler.cancel(todoItem)
         }.getOrElse {
             Log.d("error source database", it.message.toString())
         }
+
     }
 
     override suspend fun getItemTodoCache(todoId: String): TodoItem? {
@@ -90,6 +103,4 @@ class DatabaseSourceImpl @Inject constructor(
     override suspend fun deleteRequest(requestDto: RequestDto) {
         requestDao.deleteRequest(requestDto)
     }
-
-
 }

@@ -5,6 +5,7 @@ import androidx.annotation.RestrictTo
 import androidx.lifecycle.ViewModelProvider
 import com.template.api.services.TaskService
 import com.template.api.services.YandexAccountService
+import com.template.common.theme.ThemeProvider
 import com.template.database.AppDatabase
 import kotlin.properties.Delegates
 
@@ -13,7 +14,7 @@ interface SettingDeps {
     val database: AppDatabase
     val yandexAccountService: YandexAccountService
     val context: Context
-    val viewModelFactory: ViewModelProvider.Factory
+    val themeProvider: ThemeProvider
 }
 
 

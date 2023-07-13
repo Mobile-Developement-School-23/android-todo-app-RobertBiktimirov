@@ -1,6 +1,5 @@
 package com.template.setting_feature.data.sources.apiSource
 
-import android.util.Log
 import com.template.api.entity.YandexAccountApi
 import com.template.api.services.YandexAccountService
 import com.template.common.utli.ApiError
@@ -18,7 +17,6 @@ class ApiSourceImpl @Inject constructor(
     override suspend fun getDataYandexAccount(): ApiResult<YandexAccountApi> {
         val jwtToken = jwtTokenProvider.getJwtToken()
 
-        Log.d("jwtTokenProvider.getJwtToken()", jwtToken.toString())
         return if (jwtToken == null) {
             return ApiError(YANDEX_JWT_NULL_CODE, YANDEX_JWT_NULL_MESSAGE)
         } else {

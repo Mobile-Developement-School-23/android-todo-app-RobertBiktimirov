@@ -4,6 +4,8 @@ import com.template.database.AppDatabase
 import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
 import com.template.task_feature.data.repository.TodoItemRepositoryImpl
+import com.template.task_feature.data.setup_notification.AlarmScheduler
+import com.template.task_feature.data.setup_notification.AlarmSchedulerImpl
 import com.template.task_feature.data.sources.api.ApiSource
 import com.template.task_feature.data.sources.api.ApiSourceImpl
 import com.template.task_feature.data.sources.database.DatabaseSource
@@ -42,5 +44,8 @@ internal class TaskModule {
         @Binds
         @TaskScope
         fun bindDatabaseSource(impl: DatabaseSourceImpl): DatabaseSource
+
+        @Binds
+        fun bindAlarScheduler(impl: AlarmSchedulerImpl): AlarmScheduler
     }
 }

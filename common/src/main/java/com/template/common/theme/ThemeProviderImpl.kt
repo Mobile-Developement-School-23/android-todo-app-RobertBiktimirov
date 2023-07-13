@@ -1,24 +1,19 @@
-package com.template.todoapp.data.themeProvider
+package com.template.common.theme
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.template.todoapp.domain.entity.ThemeEnum
+import com.template.resourses_module.R
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class ThemeProvider @Inject constructor(
-    context: Context
-) {
+class ThemeProviderImpl(context: Context) : ThemeProvider {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-        name = context.getString(com.template.resourses_module.R.string.name_datastore_theme)
+        name = context.getString(R.string.name_theme_shared_preference)
     )
 
     private val dataStore = context.dataStore
@@ -31,19 +26,19 @@ class ThemeProvider @Inject constructor(
     }
 
 
-    suspend fun setTheme(themeEnum: ThemeEnum) {
+    override suspend fun setTheme(themeEnum: ThemeEnumCommon) {
 
         dataStore.edit {
             it[themeModKey] = when (themeEnum) {
-                ThemeEnum.DARK -> {
+                ThemeEnumCommon.DARK -> {
                     DARK_THEME
                 }
 
-                ThemeEnum.DAY -> {
+                ThemeEnumCommon.DAY -> {
                     DAY_THEME
                 }
 
-                ThemeEnum.SYSTEM -> {
+                ThemeEnumCommon.SYSTEM -> {
                     SYSTEM_THEME
                 }
             }
@@ -51,24 +46,24 @@ class ThemeProvider @Inject constructor(
     }
 
 
-    fun getTheme(): Flow<ThemeEnum> =
+    override fun getTheme(): Flow<ThemeEnumCommon> =
         dataStore.data
-            .catch {
-                emit(emptyPreferences())
-            }
             .map { pref ->
                 when (pref[themeModKey]) {
                     DARK_THEME -> {
-                        ThemeEnum.DARK
+                        ThemeEnumCommon.DARK
                     }
+
                     DAY_THEME -> {
-                        ThemeEnum.DAY
+                        ThemeEnumCommon.DAY
                     }
+
                     SYSTEM_THEME -> {
-                        ThemeEnum.SYSTEM
+                        ThemeEnumCommon.SYSTEM
                     }
+
                     else -> {
-                        throw RuntimeException()
+                        ThemeEnumCommon.SYSTEM
                     }
                 }
             }

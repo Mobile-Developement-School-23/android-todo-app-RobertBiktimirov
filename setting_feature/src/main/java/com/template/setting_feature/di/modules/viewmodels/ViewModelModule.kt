@@ -14,6 +14,11 @@ import kotlin.reflect.KClass
 
 @Module
 internal interface ViewModelModule {
+
+    @Binds
+    @SettingScope
+    fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
+
     @Binds
     @IntoMap
     @ViewModelKey(SettingViewModel::class)

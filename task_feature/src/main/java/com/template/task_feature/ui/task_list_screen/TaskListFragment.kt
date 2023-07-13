@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.template.resourses_module.R
 import com.template.task_feature.databinding.FragmentMainBinding
 import com.template.task_feature.di.TaskComponentViewModel
+import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.ui.task_list_screen.adapter.TaskListAdapter
 import com.template.task_feature.ui.task_list_screen.adapter.TaskListTouchHelper
@@ -36,7 +37,7 @@ class TaskListFragment : Fragment(), TaskListTouchHelper.SetupTaskBySwipe {
     private var navigation: TaskNavigation? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelFactory)[TaskListViewModel::class.java]

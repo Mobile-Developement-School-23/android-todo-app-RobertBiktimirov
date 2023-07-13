@@ -1,6 +1,5 @@
 package com.template.task_feature.data.repository
 
-import android.util.Log
 import com.template.common.utli.ApiError
 import com.template.common.utli.ApiException
 import com.template.common.utli.ApiSuccess
@@ -90,7 +89,6 @@ internal class TodoItemRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveTodoItem(todoItem: TodoItem): RepositoryResult<TodoItem> {
-        Log.d("connection test", "saveTodoItem")
         databaseSource.saveInCacheTodoItem(todoItem)
 
         return when (val apiResponse = apiSource.saveInApi(todoItem)) {
@@ -110,23 +108,19 @@ internal class TodoItemRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteTodoItem(todoItem: TodoItem): RepositoryResult<TodoItem> {
-        Log.d("connection test", "deleteTodoItem")
 
-        databaseSource.deleteTodoCache(todoItem.id)
+        databaseSource.deleteTodoCache(todoItem)
 
         return when (val apiResponse = apiSource.deleteTodoApi(todoItem.id)) {
             is ApiError -> {
-                Log.d("connection test", "ApiError")
                 databaseSource.saveRequest(ViewRequest.DELETE, todoItem.toEntity())
                 RepositoryError(apiResponse.code, apiResponse.message)
             }
             is ApiException -> {
-                Log.d("connection test", "ApiException")
                 databaseSource.saveRequest(ViewRequest.DELETE, todoItem.toEntity())
                 RepositoryException(apiResponse.e)
             }
             is ApiSuccess -> {
-                Log.d("connection test", "ApiSuccess")
                 revisionProvider.updateRevision(apiResponse.data.revision)
                 RepositorySuccess(apiResponse.data.todoItem.toUi())
             }
@@ -134,7 +128,6 @@ internal class TodoItemRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateTodoItem(todoItem: TodoItem): RepositoryResult<TodoItem> {
-        Log.d("connection test", "updateTodoItem")
         databaseSource.editTodoCache(todoItem)
 
         return when (val apiResponse = apiSource.editTodoApi(todoItem)) {
@@ -154,7 +147,6 @@ internal class TodoItemRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTodoItem(id: String): RepositoryResult<TodoItem> {
-        Log.d("connection test", "getTodoItem")
         val cache = databaseSource.getItemTodoCache(id)
         val todoItem = if (cache != null) {
             return RepositorySuccess(cache)

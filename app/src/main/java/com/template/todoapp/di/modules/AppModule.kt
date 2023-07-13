@@ -4,14 +4,19 @@ import android.content.Context
 import com.template.api.RetrofitRepository
 import com.template.api.services.TaskService
 import com.template.api.services.YandexAccountService
+import com.template.common.theme.ThemeProvider
+import com.template.common.theme.ThemeProviderImpl
 import com.template.database.AppDatabase
 import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
+import com.template.todoapp.data.MainRepositoryImpl
+import com.template.todoapp.domain.repository.MainRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [AppModule.BindModule::class])
 class AppModule {
 
 
@@ -47,5 +52,25 @@ class AppModule {
     @Singleton
     fun provideTodoService(retrofitRepository: RetrofitRepository): TaskService =
         retrofitRepository.taskApi
+
+
+    @Provides
+    @Singleton
+    fun provideThemeProviderImpl(context: Context): ThemeProviderImpl {
+        return ThemeProviderImpl(context)
+    }
+
+
+    @Module
+    interface BindModule{
+        @Binds
+        @Singleton
+        fun bindMainRepository(impl: MainRepositoryImpl): MainRepository
+
+        @Binds
+        @Singleton
+        fun bindThemeProvider(impl: ThemeProviderImpl): ThemeProvider
+    }
+
 
 }

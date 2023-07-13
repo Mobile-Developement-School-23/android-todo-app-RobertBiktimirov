@@ -12,7 +12,6 @@ interface TaskDeps {
     val database: AppDatabase
     val todoService: TaskService
     val context: Context
-    val viewModelFactory: ViewModelProvider.Factory
 }
 
 

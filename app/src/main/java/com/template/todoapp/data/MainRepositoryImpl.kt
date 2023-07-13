@@ -1,10 +1,16 @@
 package com.template.todoapp.data
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import com.template.api.entity.TodoBody
 import com.template.api.entity.TodoItemApi
 import com.template.api.entity.TodoResponse
 import com.template.api.services.TaskService
+import com.template.common.theme.ThemeEnumCommon
+import com.template.common.theme.ThemeProvider
 import com.template.common.utli.*
 import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
@@ -13,8 +19,10 @@ import com.template.database.entity.ViewRequest
 import com.template.task_feature.data.mappers.*
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
-import com.template.todoapp.data.themeProvider.ThemeProvider
+import com.template.todoapp.domain.entity.ThemeEnum
 import com.template.todoapp.domain.repository.MainRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
 import com.template.resourses_module.R as resR
@@ -25,11 +33,17 @@ class MainRepositoryImpl @Inject constructor(
     private val todoService: TaskService,
     private val context: Context,
     private val themeProvider: ThemeProvider
-): MainRepository {
+) : MainRepository {
 
-    private val sharedPreferences =
+    private val revisionSharedPreferences =
         context.getSharedPreferences(
             context.getString(resR.string.name_revision_shared_preference),
+            Context.MODE_PRIVATE
+        )
+
+    private val themeSharedPrefernces =
+        context.getSharedPreferences(
+            context.getString(resR.string.key_sp_theme),
             Context.MODE_PRIVATE
         )
 
@@ -44,16 +58,15 @@ class MainRepositoryImpl @Inject constructor(
         }
     }
 
-
     suspend fun loadNewDataFromDb() {
         val requests = requestDao.getRequest()
         val response = todoService.getTodoList().body()
         var revision = response?.revision
-            ?: sharedPreferences.getInt(context.getString(resR.string.key_sp_revision), 0)
+            ?: revisionSharedPreferences.getInt(context.getString(resR.string.key_sp_revision), 0)
 
         if (response != null) {
 
-            requests.forEach {request ->
+            requests.forEach { request ->
                 when (request.view) {
                     ViewRequest.UPDATE -> {
                         revision = loadItemRequest {
@@ -64,11 +77,13 @@ class MainRepositoryImpl @Inject constructor(
                             )
                         } ?: revision
                     }
+
                     ViewRequest.DELETE -> {
                         revision = loadItemRequest {
                             todoService.deleteTodoItem(request.todoItemEntity.id, revision)
                         } ?: revision
                     }
+
                     ViewRequest.SAVE -> {
                         revision = loadItemRequest {
                             todoService.saveTodoItem(
@@ -85,8 +100,9 @@ class MainRepositoryImpl @Inject constructor(
         saveRevision(revision)
     }
 
+
     private fun saveRevision(revision: Int) {
-        sharedPreferences.edit()
+        revisionSharedPreferences.edit()
             .putInt(context.getString(resR.string.key_sp_revision), revision)
             .apply()
     }
@@ -98,50 +114,92 @@ class MainRepositoryImpl @Inject constructor(
             is ApiError -> {
                 null
             }
+
             is ApiException -> {
                 null
             }
+
             is ApiSuccess -> {
                 apiResult.data.revision
             }
         }
     }
 
+    override suspend fun initTheme() {
 
-    private fun TodoItemApi.toEntity() = TodoItemEntity(
+        val theme =
+            themeSharedPrefernces.getString(context.getString(resR.string.key_sp_theme), null)
+
+        theme?.let {
+            when(it) {
+
+                context.getString(resR.string.key_dark_theme_application) -> {
+                    AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+                }
+                context.getString(resR.string.key_light_theme_application) -> {
+                    AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
+                }
+                else -> {
+                    AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_UNSPECIFIED)
+                }
+            }
+        }
+    }
+
+    override fun getTheme(): Flow<ThemeEnum> {
+        return themeProvider.getTheme().map {
+            when(it) {
+                ThemeEnumCommon.DARK -> {ThemeEnum.DARK}
+                ThemeEnumCommon.DAY -> {ThemeEnum.DAY}
+                ThemeEnumCommon.SYSTEM -> {ThemeEnum.SYSTEM}
+            }
+        }
+    }
+
+    override suspend fun setTheme(themeEnum: ThemeEnum) {
+        themeProvider.setTheme(
+            when(themeEnum) {
+                ThemeEnum.DARK -> {ThemeEnumCommon.DARK}
+                ThemeEnum.DAY -> {ThemeEnumCommon.DAY}
+                ThemeEnum.SYSTEM -> {ThemeEnumCommon.SYSTEM}
+            }
+        )
+    }
+}
+
+
+private fun TodoItemApi.toEntity() = TodoItemEntity(
+    id = id,
+    text = text,
+    importance = importance.toImportance().toDto(),
+    deadline = deadline,
+    flag = done,
+    color = color,
+    dateOfCreating = createdAt,
+    dateOfEditing = changedAt
+)
+
+private fun List<TodoItemApi>.toEntity() = this.map { it.toEntity() }
+
+private fun Importance.toBody(): String = when (this) {
+    Importance.LOW -> "low"
+    Importance.REGULAR -> "basic"
+    Importance.URGENT -> "important"
+}
+
+
+private fun TodoItem.toBody(): TodoBody {
+    val todoItemApi = TodoItemApi(
         id = id,
         text = text,
-        importance = importance.toImportance().toDto(),
+        importance = importance.toBody(),
         deadline = deadline,
-        flag = done,
+        done = isCompleted,
         color = color,
-        dateOfCreating = createdAt,
-        dateOfEditing = changedAt
+        createdAt = dateOfCreating,
+        changedAt = dateOfEditing ?: dateOfCreating,
+        lastUpdateBy = "cf1"
     )
 
-    private fun List<TodoItemApi>.toEntity() = this.map { it.toEntity() }
-
-    private fun Importance.toBody(): String = when (this) {
-        Importance.LOW -> "low"
-        Importance.REGULAR -> "basic"
-        Importance.URGENT -> "important"
-    }
-
-
-    private fun TodoItem.toBody(): TodoBody {
-        val todoItemApi = TodoItemApi(
-            id = id,
-            text = text,
-            importance = importance.toBody(),
-            deadline = deadline,
-            done = isCompleted,
-            color = color,
-            createdAt = dateOfCreating,
-            changedAt = dateOfEditing ?: dateOfCreating,
-            lastUpdateBy = "cf1"
-        )
-
-        return TodoBody(todoItemApi)
-    }
-
+    return TodoBody(todoItemApi)
 }

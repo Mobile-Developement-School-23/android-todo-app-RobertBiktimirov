@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import com.template.api.services.TaskService
 import com.template.api.services.YandexAccountService
+import com.template.common.theme.ThemeProvider
+import com.template.common.theme.ThemeProviderImpl
 import com.template.database.AppDatabase
 import com.template.setting_feature.di.deps.SettingDeps
 import com.template.task_feature.di.deps.TaskDeps
@@ -24,7 +26,7 @@ interface AppComponent : TaskDeps, SettingDeps {
     override val todoService: TaskService
     override val context: Context
     override val yandexAccountService: YandexAccountService
-    override val viewModelFactory: ViewModelProvider.Factory
+    override val themeProvider: ThemeProvider
 
     fun inject(mainActivity: MainActivity)
     fun inject(application: TodoApplication)

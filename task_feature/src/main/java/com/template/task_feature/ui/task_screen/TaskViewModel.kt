@@ -1,20 +1,30 @@
 package com.template.task_feature.ui.task_screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.template.common.utli.RepositoryError
 import com.template.common.utli.RepositoryException
 import com.template.common.utli.RepositoryResult
 import com.template.common.utli.RepositorySuccess
-import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.usecase.DeleteTodoUseCase
 import com.template.task_feature.domain.usecase.GetTodoItemUseCase
 import com.template.task_feature.domain.usecase.SaveTodoItemUseCase
 import com.template.task_feature.domain.usecase.UpdateTodoListUseCase
+import com.template.task_feature.ui.task_screen.screen_state.Action
+import com.template.task_feature.ui.task_screen.screen_state.CloseImportanceDio
+import com.template.task_feature.ui.task_screen.screen_state.CloseScreen
+import com.template.task_feature.ui.task_screen.screen_state.ConsentToOffline
+import com.template.task_feature.ui.task_screen.screen_state.DeadlineChange
+import com.template.task_feature.ui.task_screen.screen_state.Delete
+import com.template.task_feature.ui.task_screen.screen_state.ImportanceChange
+import com.template.task_feature.ui.task_screen.screen_state.ImportanceClick
+import com.template.task_feature.ui.task_screen.screen_state.SaveScreen
+import com.template.task_feature.ui.task_screen.screen_state.TaskScreenState
+import com.template.task_feature.ui.task_screen.screen_state.TextChange
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -26,123 +36,181 @@ internal class TaskViewModel @Inject constructor(
     private val getTodoItemUseCase: GetTodoItemUseCase
 ) : ViewModel() {
 
-    private val _loadingStatus = MutableStateFlow(false)
-    val loadingStatus get() = _loadingStatus.asStateFlow()
-
     private val _todoItemState = MutableStateFlow<TodoItem?>(null)
-    val todoItemState = _todoItemState.asStateFlow()
-
-    private val _deadline = MutableStateFlow<Long?>(null)
-    val deadline get() = _deadline.asStateFlow()
-
-    private val _nullErrorText = MutableStateFlow(false)
-    val nullErrorText = _nullErrorText.asStateFlow()
-
-    private val taskText = MutableStateFlow("")
-
-    private val _error: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val error = _error.asStateFlow()
-
     private val _closeScreen = MutableStateFlow(false)
-    val closeScreen = _closeScreen.asStateFlow()
-
+    val closeScreen get() = _closeScreen.asStateFlow()
     private val _noInternet = MutableStateFlow(false)
-    val noInternet = _noInternet.asStateFlow()
+    val noInternet get() = _noInternet.asStateFlow()
 
-    fun setNoInternet(flag: Boolean){
-        _noInternet.tryEmit(flag)
-        _closeScreen.tryEmit(!flag)
-    }
+    private val _importanceClick: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val importanceClick get() = _importanceClick.asStateFlow()
 
-    fun setTaskText(text: String) {
-        taskText.tryEmit(text)
-        _nullErrorText.tryEmit(false)
-    }
+    val state: MutableStateFlow<TaskScreenState> = MutableStateFlow(TaskScreenState())
 
+    fun onAction(action: Action) {
 
-    fun setDeadline(deadline: Long?) {
-        _deadline.tryEmit(deadline)
+        when (action) {
+            is CloseScreen -> {
+                _closeScreen.tryEmit(true)
+            }
+
+            is SaveScreen -> {
+                state.update {
+                    it.copy(isLoading = true)
+                }
+                saveTask(state.value)
+            }
+
+            is TextChange -> {
+                state.update {
+                    it.copy(text = action.text, nullTextChange = false)
+                }
+            }
+
+            is DeadlineChange -> {
+                state.update {
+                    it.copy(deadline = action.deadline)
+                }
+            }
+
+            is ImportanceChange -> {
+                state.update {
+                    it.copy(importance = action.importance, isImportanceDioOpen = false)
+                }
+            }
+
+            is ConsentToOffline -> {
+                onAction(CloseScreen)
+            }
+
+            Delete -> {
+                deleteTodo()
+            }
+
+            ImportanceClick -> {
+                state.update {
+                    it.copy(isImportanceDioOpen = !it.isImportanceDioOpen)
+                }
+            }
+
+            CloseImportanceDio -> {
+                state.update {
+                    it.copy(isImportanceDioOpen = false)
+                }
+            }
+        }
     }
 
     fun getTodoItem(id: String) {
         viewModelScope.launch {
-            _loadingStatus.tryEmit(true)
 
             when (val todoItem = getTodoItemUseCase.invoke(id)) {
                 is RepositoryError -> {
-                    _error.tryEmit(true)
-                    _loadingStatus.tryEmit(false)
+                    state.update {
+                        it.copy(error = true, isLoading = false)
+                    }
                 }
+
                 is RepositoryException -> {
-                    _error.tryEmit(true)
-                    _loadingStatus.tryEmit(false)
+                    state.update {
+                        it.copy(error = true, isLoading = false)
+                    }
                 }
+
                 is RepositorySuccess -> {
-                    _todoItemState.tryEmit(todoItem.data)
-                    _loadingStatus.tryEmit(false)
+                    _todoItemState.emit(todoItem.data)
+                    state.update {
+                        it.copy(
+                            id = todoItem.data.id,
+                            error = false,
+                            isLoading = false,
+                            text = todoItem.data.text,
+                            deadline = todoItem.data.deadline,
+                            importance = todoItem.data.importance,
+                            isAddScreen = false,
+                            isCompleted = todoItem.data.isCompleted,
+                            dateOfCreating = todoItem.data.dateOfCreating,
+                            dateOnChanged = todoItem.data.dateOfEditing
+                        )
+                    }
                 }
             }
 
         }
     }
 
-    fun saveTask(importance: Importance, dateOfCreating: Long) {
+    private fun saveTask(state: TaskScreenState) {
         viewModelScope.launch {
-            saveOrUpdateTask(importance, dateOfCreating)
+            saveOrUpdateTask(state)
         }
     }
 
-    fun deleteTodo() {
+    private fun deleteTodo() {
         viewModelScope.launch {
-            _todoItemState.value?.let {
-                handleUpdateOrSaveResult(deleteTodoUseCase(it))
+
+            with(state.value) {
+                if (id == "") {
+                    onAction(CloseScreen)
+                    return@launch
+                }
+                handleUpdateOrSaveResult(
+                    deleteTodoUseCase(
+                        TodoItem(
+                            id,
+                            text,
+                            importance,
+                            deadline,
+                            isCompleted,
+                            color = null,
+                            dateOfCreating,
+                            dateOnChanged
+                        )
+                    )
+                )
             }
         }
     }
 
-    fun closeTheScreen() {
-        _closeScreen.tryEmit(true)
-    }
+    private suspend fun saveOrUpdateTask(stateScreen: TaskScreenState) {
 
-    private suspend fun saveOrUpdateTask(importance: Importance, dateOfCreating: Long) {
+        if (stateScreen.text != "") {
 
-        if (taskText.value.isNotEmpty()) {
-            _loadingStatus.tryEmit(true)
-            if (_todoItemState.value == null) {
+            if (stateScreen.isAddScreen) {
+
                 handleUpdateOrSaveResult(
                     saveTodoItemUseCase(
                         TodoItem(
-                            generateTodoId(),
-                            taskText.value,
-                            importance,
-                            deadline.value,
-                            false,
-                            "#000000",
-                            dateOfCreating,
-                            null
+                            id = generateTodoId(),
+                            text = stateScreen.text,
+                            importance = stateScreen.importance,
+                            deadline = stateScreen.deadline,
+                            isCompleted = false,
+                            color = null,
+                            Calendar.getInstance().timeInMillis,
+                            null,
                         )
                     )
                 )
             } else {
-                todoItemState.value?.let {
-                    handleUpdateOrSaveResult(
-                        updateTodoListUseCase(
-                            TodoItem(
-                                it.id,
-                                taskText.value,
-                                importance,
-                                deadline.value,
-                                it.isCompleted,
-                                "#000000",
-                                it.dateOfCreating,
-                                Calendar.getInstance().timeInMillis
-                            )
+                handleUpdateOrSaveResult(
+                    updateTodoListUseCase(
+                        TodoItem(
+                            id = stateScreen.id,
+                            text = stateScreen.text,
+                            importance = stateScreen.importance,
+                            deadline = stateScreen.deadline,
+                            isCompleted = stateScreen.isCompleted,
+                            color = null,
+                            dateOfCreating = stateScreen.dateOfCreating,
+                            Calendar.getInstance().timeInMillis
                         )
                     )
-                }
+                )
             }
         } else {
-            _nullErrorText.emit(true)
+            state.update {
+                it.copy(nullTextChange = true, isLoading = false)
+            }
         }
     }
 
@@ -151,22 +219,27 @@ internal class TaskViewModel @Inject constructor(
 
         when (result) {
             is RepositoryError -> {
-                Log.d("connection test", "${result.code} ${result.message}")
-                _error.tryEmit(true)
-                _loadingStatus.tryEmit(false)
+                onAction(CloseScreen)
             }
+
             is RepositoryException -> {
                 _noInternet.tryEmit(true)
-                _loadingStatus.tryEmit(false)
+                state.update {
+                    it.copy(isLoading = false)
+                }
+                onAction(CloseScreen)
             }
+
             is RepositorySuccess -> {
-                _loadingStatus.tryEmit(false)
-                _closeScreen.tryEmit(true)
+                onAction(CloseScreen)
             }
         }
     }
 
 
     private fun generateTodoId() =
-        "${taskText.value.hashCode()} - ${Calendar.getInstance().timeInMillis}"
+        "${Calendar.getInstance().timeInMillis} - ${kotlin.random.Random.nextInt(-1000, 1000)}"
 }
+
+
+

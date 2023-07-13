@@ -1,20 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="expandedText">
-        <item name="android:textSize">36sp</item>
-        <item name="fontFamily">roboto</item>
-        <item name="color">?attr/label_primary</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-
-    <style name="collapsedText">
-        <item name="android:textSize">22sp</item>
-        <item name="fontFamily">roboto</item>
-        <item name="color">?attr/label_primary</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
 
     <style name="CustomCalendar" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
         <item name="android:textColorPrimary">?attr/back_primary</item>
@@ -24,12 +9,12 @@
     </style>
 
 
-    <style name="CalendarStyle" parent="Widget.Material3.MaterialCalendar">
-        <item name="android:focusedMonthDateColor">?attr/color_red</item>
-        <item name="android:weekNumberColor">@color/red</item>
-        <item name="android:weekDayTextAppearance">?attr/color_red</item>
-        <item name="android:dateTextAppearance">?attr/color_red</item>
-    </style>
+<!--    <style name="CalendarStyle" parent="Widget.Material3.MaterialCalendar">-->
+<!--        <item name="android:focusedMonthDateColor">?attr/color_red</item>-->
+<!--        <item name="android:weekNumberColor">@color/red</item>-->
+<!--        <item name="android:weekDayTextAppearance">?attr/color_red</item>-->
+<!--        <item name="android:dateTextAppearance">?attr/color_red</item>-->
+<!--    </style>-->
 
 
     <style name="Widget.CalendarView.Custom" parent="android:Widget.CalendarView">

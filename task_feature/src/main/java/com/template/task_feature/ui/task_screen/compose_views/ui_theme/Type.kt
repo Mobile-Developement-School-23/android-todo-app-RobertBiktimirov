@@ -1,4 +1,4 @@
-package com.template.task_feature.ui.task_fragment_compose.ui.theme
+package com.template.task_feature.ui.task_screen.compose_views.ui_theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
