@@ -418,3 +418,40 @@ fun ScreenPreview() {
         )
     }
 }
+
+
+@Preview
+@Composable
+fun ScreenDarkPreview() {
+
+    TodoAppTheme(darkTheme = true) {
+        TaskScreenWithBottomDio(
+            onAction = {},
+            state = MutableStateFlow(TaskScreenState())
+        )
+    }
+}
+
+
+@Preview
+@Composable
+fun ToolbarPreview() {
+
+    TodoAppTheme(darkTheme = true) {
+        TaskToolbar(closeClick = {}) {
+
+        }
+    }
+}
+
+@Preview
+@Composable
+fun EditTextPreview() {
+
+    TodoAppTheme(darkTheme = true) {
+        EditTaskText(text = "test text", isNullText = false, setText = {})
+    }
+}
+
+
+
