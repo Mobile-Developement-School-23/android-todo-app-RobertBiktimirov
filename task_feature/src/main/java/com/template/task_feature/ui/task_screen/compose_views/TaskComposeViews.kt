@@ -52,9 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.template.common.utli.timestampToFormattedDate
+import com.template.resourses_module.compose_theme.ui_theme.ExtendedTheme.colors
+import com.template.resourses_module.compose_theme.ui_theme.TodoAppTheme
 import com.template.task_feature.domain.entity.Importance
-import com.template.task_feature.ui.task_screen.compose_views.ui_theme.ExtendedTheme.colors
-import com.template.task_feature.ui.task_screen.compose_views.ui_theme.TodoAppTheme
 import com.template.task_feature.ui.task_screen.screen_state.Action
 import com.template.task_feature.ui.task_screen.screen_state.CloseImportanceDio
 import com.template.task_feature.ui.task_screen.screen_state.CloseScreen

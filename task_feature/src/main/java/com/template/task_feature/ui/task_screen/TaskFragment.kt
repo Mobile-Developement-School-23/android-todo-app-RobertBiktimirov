@@ -11,13 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
+import com.template.resourses_module.compose_theme.ui_theme.TodoAppTheme
 import com.template.task_feature.databinding.FragmentTaskBinding
 import com.template.task_feature.di.TaskComponentViewModel
 import com.template.task_feature.di.modules.viewmodels.ViewModelFactory
 import com.template.task_feature.ui.task_navigation.TaskNavigation
-import com.template.task_feature.ui.task_screen.compose_views.TaskScreen
 import com.template.task_feature.ui.task_screen.compose_views.TaskScreenWithBottomDio
-import com.template.task_feature.ui.task_screen.compose_views.ui_theme.TodoAppTheme
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

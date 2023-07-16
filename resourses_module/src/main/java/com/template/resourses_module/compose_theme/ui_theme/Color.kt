@@ -1,14 +1,8 @@
-package com.template.task_feature.ui.task_screen.compose_views.ui_theme
+package com.template.resourses_module.compose_theme.ui_theme
 
 import androidx.compose.ui.graphics.Color
 
-val Red = Color(0xFFFF3B30)
-val Green = Color(0xFF34C759)
-val Blue = Color(0xFF007AFF)
-val BlueTranslucent = Color(0x4D007AFF)
-val Gray = Color(0xFF8E8E93)
-val GrayLight = Color(0xFFD1D1D6)
-val White = Color(0xFFFFFFFF)
+val Yellow = Color(0xFFE4D00A)
 
 val LightBlueTextColor = Color(0xFF007AFF)
 val DarkBlueTextColor = Color(0xFF0A84FF)

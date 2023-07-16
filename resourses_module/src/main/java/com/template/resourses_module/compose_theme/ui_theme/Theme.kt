@@ -1,4 +1,4 @@
-package com.template.task_feature.ui.task_screen.compose_views.ui_theme
+package com.template.resourses_module.compose_theme.ui_theme
 
 import android.app.Activity
 import android.os.Build
@@ -32,7 +32,8 @@ data class ExtendedColors(
     val backSecondary: Color = Color.Unspecified,
     val backElevated: Color = Color.Unspecified,
     val backBlueText: Color = Color.Unspecified,
-    val backRedColor: Color = Color.Unspecified
+    val backRedColor: Color = Color.Unspecified,
+    val yellow: Color = Color.Unspecified
 
 )
 
@@ -47,7 +48,8 @@ val lightExtendedColors = ExtendedColors(
     backSecondary = LightBackSecondary,
     backElevated = LightBackElevated,
     backBlueText = LightBlueTextColor,
-    backRedColor = LightRedTextColor
+    backRedColor = LightRedTextColor,
+    yellow = Yellow
 )
 
 val darkExtendedColors = ExtendedColors(
@@ -61,7 +63,8 @@ val darkExtendedColors = ExtendedColors(
     backSecondary = DarkBackSecondary,
     backElevated = DarkBackElevated,
     backBlueText = DarkBlueTextColor,
-    backRedColor = DarkRedTextColor
+    backRedColor = DarkRedTextColor,
+    yellow = Yellow
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
