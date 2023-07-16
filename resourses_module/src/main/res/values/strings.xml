@@ -32,6 +32,7 @@
     <string name="key_sp_revision">revision_api</string>
 
     <string name="key_alarm_manager_intent">intentDataTodoItem</string>
+    <string name="key_alarm_manager_todo_item_key">DataTodoItem</string>
 
     <string name="name_theme_shared_preference">theme_data_store_name</string>
     <string name="key_sp_theme">theme_app_key</string>

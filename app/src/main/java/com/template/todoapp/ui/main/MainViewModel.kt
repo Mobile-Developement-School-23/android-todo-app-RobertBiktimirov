@@ -1,10 +1,5 @@
 package com.template.todoapp.ui.main
 
-import android.util.Log
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.template.todoapp.domain.entity.ThemeEnum

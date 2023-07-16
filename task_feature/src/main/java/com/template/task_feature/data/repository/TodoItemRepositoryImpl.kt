@@ -1,5 +1,6 @@
 package com.template.task_feature.data.repository
 
+import android.util.Log
 import com.template.common.utli.ApiError
 import com.template.common.utli.ApiException
 import com.template.common.utli.ApiSuccess
@@ -33,6 +34,8 @@ internal class TodoItemRepositoryImpl @Inject constructor(
 
         val requestsCache = databaseSource.getRequests()
         val response = apiSource.getListTodoApi()
+
+        Log.d("tokensTest", response.toString())
 
         if (response is ApiSuccess) {
             revisionProvider.updateRevision(response.data.revision)

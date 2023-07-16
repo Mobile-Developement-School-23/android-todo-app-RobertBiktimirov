@@ -1,9 +1,11 @@
 package com.template.sign_up_feature.di.deps
 
+import android.content.Context
 import androidx.annotation.RestrictTo
 import kotlin.properties.Delegates
 
 interface SignDeps {
+    val context: Context
 }
 
 

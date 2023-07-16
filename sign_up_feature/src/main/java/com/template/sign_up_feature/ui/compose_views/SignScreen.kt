@@ -71,7 +71,7 @@ fun LogoView() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 100.dp)
+            .padding(top = 150.dp)
     ) {
         Image(
             painter = painterResource(id = com.template.resourses_module.R.drawable.notebook__1_),
@@ -136,12 +136,12 @@ fun AppName() {
         Text(
             text = "Приветствую в TodoApp",
             color = ExtendedTheme.colors.labelPrimary,
-            fontSize = 36.sp,
+            fontSize = 30.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             style = typography.headlineMedium,
             modifier = Modifier
-                .padding(top = 15.dp, start = 20.dp, end = 20.dp)
+                .padding(top = 15.dp, start = 30.dp, end = 30.dp)
                 .align(Alignment.Center),
         )
     }

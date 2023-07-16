@@ -1,6 +1,7 @@
 package com.template.todoapp.data
 
 import android.content.Context
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
@@ -64,6 +65,7 @@ class MainRepositoryImpl @Inject constructor(
         var revision = response?.revision
             ?: revisionSharedPreferences.getInt(context.getString(resR.string.key_sp_revision), 0)
 
+        Log.d("nullTokenTest", "loadNewDataFromDb")
         if (response != null) {
 
             requests.forEach { request ->

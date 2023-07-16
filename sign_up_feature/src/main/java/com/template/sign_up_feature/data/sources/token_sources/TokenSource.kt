@@ -4,6 +4,5 @@ interface TokenSource {
 
     suspend fun getToken(): String?
 
-    suspend fun saveToken(token: String)
-
+    fun saveToken(token: String, jwtToken: String)
 }

@@ -54,22 +54,11 @@ class AppModule {
         retrofitRepository.taskApi
 
 
-    @Provides
-    @Singleton
-    fun provideThemeProviderImpl(context: Context): ThemeProviderImpl {
-        return ThemeProviderImpl(context)
-    }
-
-
     @Module
     interface BindModule{
         @Binds
         @Singleton
         fun bindMainRepository(impl: MainRepositoryImpl): MainRepository
-
-        @Binds
-        @Singleton
-        fun bindThemeProvider(impl: ThemeProviderImpl): ThemeProvider
     }
 
 

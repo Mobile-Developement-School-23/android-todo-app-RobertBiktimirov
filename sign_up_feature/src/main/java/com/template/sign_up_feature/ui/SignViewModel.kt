@@ -1,5 +1,6 @@
 package com.template.sign_up_feature.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.template.sign_up_feature.domain.usecases.GetTokenUseCase
@@ -10,6 +11,8 @@ import com.template.sign_up_feature.ui.setup_screen.ErrorSignUp
 import com.template.sign_up_feature.ui.setup_screen.Registered
 import com.template.sign_up_feature.ui.setup_screen.SignStateScreen
 import com.template.sign_up_feature.ui.setup_screen.SuccessSignUp
+import com.yandex.authsdk.YandexAuthToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,22 +27,24 @@ class SignViewModel @Inject constructor(
     private val _goToYandexSignUpAct: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val goToYandexSignUpAct = _goToYandexSignUpAct.asStateFlow()
 
-    private val _startAdditionalProtection = MutableStateFlow(false)
-    val startAdditionalProtection = _startAdditionalProtection.asStateFlow()
-
     private val _stateSignScreen = MutableStateFlow(SignStateScreen())
     val stateSignScreen = _stateSignScreen.asStateFlow()
+
+
+    private val _isSuccessRegistered = MutableStateFlow(false)
+    val isSuccessRegistered = _isSuccessRegistered.asStateFlow()
 
 
     init {
 
         viewModelScope.launch {
-            when (getTokenUseCase()) {
+            when (val token = getTokenUseCase()) {
                 null -> {
 
                 }
 
                 else -> {
+                    Log.d("nullTokenTest", token)
                     onAction(Registered)
                 }
             }
@@ -68,19 +73,18 @@ class SignViewModel @Inject constructor(
             }
 
             Registered -> {
-                _startAdditionalProtection.update {
-                    true
-                }
+                _isSuccessRegistered.update { true }
             }
         }
     }
 
 
-    private fun saveToken(token: String) {
-        viewModelScope.launch {
-            saveTokenUseCase(token)
-            _startAdditionalProtection.update { true }
+    private fun saveToken(token: YandexAuthToken){
+        viewModelScope.launch(Dispatchers.IO) {
+            val newToken = saveTokenUseCase.invoke(token)
+            if (newToken != "") {
+                onAction(Registered)
+            }
         }
     }
-
 }

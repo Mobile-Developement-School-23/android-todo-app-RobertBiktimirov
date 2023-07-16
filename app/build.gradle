@@ -48,6 +48,7 @@ dependencies {
     implementation project(":task_feature")
     implementation project(":resourses_module")
     implementation project(":setting_feature")
+    implementation project(":sign_up_feature")
 
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'

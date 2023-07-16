@@ -1,5 +1,7 @@
 package com.template.sign_up_feature.ui.setup_screen
 
+import com.yandex.authsdk.YandexAuthToken
+
 sealed interface Action
 
 sealed interface Ui: Action
@@ -10,7 +12,7 @@ sealed interface Internal: Action
 
 object ErrorSignUp: Internal
 
-class SuccessSignUp(val token: String): Internal
+class SuccessSignUp(val token: YandexAuthToken): Internal
 
 object Registered : Internal
 

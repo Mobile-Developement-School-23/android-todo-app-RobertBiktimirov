@@ -8,9 +8,11 @@ import com.template.common.theme.ThemeProvider
 import com.template.common.theme.ThemeProviderImpl
 import com.template.database.AppDatabase
 import com.template.setting_feature.di.deps.SettingDeps
+import com.template.sign_up_feature.di.deps.SignDeps
 import com.template.task_feature.di.deps.TaskDeps
 import com.template.todoapp.app.TodoApplication
 import com.template.todoapp.di.modules.AppModule
+import com.template.todoapp.di.modules.ThemeModule
 import com.template.todoapp.ui.main.MainActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -18,9 +20,9 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [AppModule::class, ViewModelModule::class]
+    modules = [AppModule::class, ViewModelModule::class, ThemeModule::class]
 )
-interface AppComponent : TaskDeps, SettingDeps {
+interface AppComponent : TaskDeps, SettingDeps, SignDeps {
 
     override val database: AppDatabase
     override val todoService: TaskService

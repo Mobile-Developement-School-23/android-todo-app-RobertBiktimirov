@@ -1,23 +1,21 @@
 package com.template.todoapp.ui.main
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.template.common.utli.runCatchingNonCancellation
 import com.template.setting_feature.ui.SettingFragment
+import com.template.sign_up_feature.ui.SignFragment
 import com.template.task_feature.ui.task_list_screen.TaskListFragment
 import com.template.task_feature.ui.task_navigation.TaskNavigation
 import com.template.task_feature.ui.task_screen.TaskFragment
 import com.template.todoapp.app.appComponent
 import com.template.todoapp.databinding.ActivityMainBinding
 import com.template.todoapp.domain.entity.ThemeEnum
+import com.template.todoapp.ui.NavigationApp
 import com.template.todoapp.ui.network_callback.NetworkConnectivityObserver
 import com.template.todoapp.ui.network_callback.observer.ConnectionObserver
 import com.template.todoapp.ui.services.factory.CreateWorkerFactory
@@ -29,7 +27,7 @@ import javax.inject.Inject
 import com.template.resourses_module.R as resR
 import com.template.todoapp.R as mainR
 
-class MainActivity : AppCompatActivity(), TaskNavigation {
+class MainActivity : AppCompatActivity(), NavigationApp {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding ?: throw Exception()
@@ -63,28 +61,31 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
         _binding = ActivityMainBinding.inflate(layoutInflater)
-        startYandexSignUp()
         setContentView(binding.root)
+
+
+        if (savedInstanceState == null) {
+
+            supportFragmentManager.beginTransaction()
+                .add(mainR.id.main_fragment_container_view, SignFragment())
+                .commit()
+        }
+
+        connectivityObserver()
+
     }
 
-    private fun startYandexSignUp() = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            yandexSignUpActivity.registerYandexSignUp(
-                it,
-                { handlerStartWorkFragment() },
-                { handleErrorInYandex() }
-            )
-        }.launch(yandexSignUpActivity.getYandexIntent(intent))
 
-
-    private fun handlerStartWorkFragment() {
-        binding.signUpButton.isVisible = false
-        updateDataWorkerStart.startUpdateDataWorker()
+    private fun connectivityObserver() {
 
         lifecycleScope.launch {
             connectivityObserver.observe().collect {
                 when (it) {
                     ConnectionObserver.Status.Available -> {
-                        connectivityObserver.lastState?.let { status ->
+                        connectivityObserver.lastState?.let { lastStatus ->
+                            if (lastStatus == ConnectionObserver.Status.Lost) {
+                                updateDataWorkerStart.startLoadNewDataFromDb()
+                            }
                         }
                     }
 
@@ -95,35 +96,35 @@ class MainActivity : AppCompatActivity(), TaskNavigation {
             }
         }
 
+    }
 
-        lifecycleScope.launch {
-            viewModel.themeFlow.collect {
-                when (it) {
-                    ThemeEnum.DARK -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
 
-                    ThemeEnum.DAY -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
+    private fun themeObserver() {
+        runCatchingNonCancellation {
+            lifecycleScope.launch {
+                viewModel.themeFlow.collect {
+                    when (it) {
+                        ThemeEnum.DARK -> {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        }
 
-                    ThemeEnum.SYSTEM -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        ThemeEnum.DAY -> {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        }
+
+                        ThemeEnum.SYSTEM -> {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        }
                     }
                 }
             }
         }
-
-        supportFragmentManager.beginTransaction()
-            .add(mainR.id.main_fragment_container_view, TaskListFragment())
-            .commit()
     }
 
-
-    private fun handleErrorInYandex() {
-        binding.signUpButton.apply {
-            isVisible = true
-        }
+    override fun goToListFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(mainR.id.main_fragment_container_view, TaskListFragment())
+            .commit()
     }
 
     override fun onBack() {

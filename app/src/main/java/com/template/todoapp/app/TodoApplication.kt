@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.template.setting_feature.di.deps.SettingDepsStore
+import com.template.sign_up_feature.di.deps.SignDepsProvider
+import com.template.sign_up_feature.di.deps.SignDepsStore
 import com.template.task_feature.di.deps.TaskDepsStore
 import com.template.todoapp.di.AppComponent
 import com.template.todoapp.di.DaggerAppComponent
@@ -40,6 +42,7 @@ class TodoApplication : Application() {
 
         TaskDepsStore.deps = appComponent
         SettingDepsStore.deps = appComponent
+        SignDepsStore.deps = appComponent
 
         WorkManager.initialize(this, configurationWorker)
     }

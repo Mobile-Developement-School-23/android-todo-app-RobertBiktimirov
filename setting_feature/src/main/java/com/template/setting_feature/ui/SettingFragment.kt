@@ -24,6 +24,7 @@ import com.template.setting_feature.domain.entity.YandexAccountEntity
 import com.template.setting_feature.ui.models.ThemeModel
 import com.template.setting_feature.ui.utils.toAvatarUrl
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -69,7 +70,7 @@ class SettingFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.theme.collectLatest {
+            viewModel.theme.collect {
                 when (it) {
                     ThemeModel.DARK -> {
                         binding.darkTheme.isChecked = true
