@@ -63,6 +63,7 @@ class SignViewModel @Inject constructor(
             }
 
             ErrorSignUp -> {
+                _isSuccessRegistered.update { false }
                 _stateSignScreen.update {
                     it.copy(isError = true, isLoading = false, isRegistered = false)
                 }

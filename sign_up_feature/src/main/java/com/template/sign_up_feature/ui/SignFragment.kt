@@ -45,7 +45,7 @@ class SignFragment : Fragment() {
 
     private val launcherYandexLogin =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
+            if (it.resultCode == Activity.RESULT_OK && it.resultCode != Activity.RESULT_CANCELED) {
                 val yandexAuthToken = yandexAuthSdk.extractToken(it.resultCode, it.data)
                 if (yandexAuthToken != null) {
 
@@ -79,7 +79,6 @@ class SignFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        Log.d("nullTokenTest", "i'm tut")
         return inflater.inflate(R.layout.fragment_sign, container, false)
             .apply {
                 findViewById<ComposeView>(R.id.compose_view_id).setContent {

@@ -1,5 +1,6 @@
 package com.template.sign_up_feature.ui.compose_views
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -44,7 +45,9 @@ fun SignScreen(
             LogoView()
             AppName()
             SignInButton(
-                Modifier.fillMaxWidth().weight(1f),
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 screenState.value.isError
             ) { onAction(ClickSignUpButton) }
         }
@@ -93,7 +96,10 @@ fun SignInButton(
 
         Button(
             modifier = Modifier.align(Alignment.Center),
-            onClick = { onClick() },
+            onClick = {
+                Log.d("nullTokenTest", "click by button")
+                onClick()
+            },
             border = BorderStroke(
                 2.dp,
                 if (isError) Color.Red else ExtendedTheme.colors.yellow
