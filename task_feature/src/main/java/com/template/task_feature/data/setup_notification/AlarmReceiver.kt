@@ -71,7 +71,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         context,
                         0,
                         Intent(),
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        PendingIntent.FLAG_IMMUTABLE
                     )
                 ).build()
             )
