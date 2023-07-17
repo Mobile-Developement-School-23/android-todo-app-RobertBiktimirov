@@ -28,7 +28,7 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val todoItem = intent?.getBundleExtra(
             context?.getString(R.string.key_alarm_manager_intent)
-        )?.getParcelable<TodoItem>(context?.getString(R.string.key_alarm_manager_intent))
+        )?.getParcelable<TodoItem>(context?.getString(R.string.key_alarm_manager_todo_item_key))
 
         coroutineScope.launch {
 
