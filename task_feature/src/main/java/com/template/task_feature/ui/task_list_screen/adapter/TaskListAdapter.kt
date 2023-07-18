@@ -33,6 +33,7 @@ class TaskListAdapter(
 
     inner class TaskViewHolder(val binding: ItemTaskListBinding, private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(todoItem: TodoItem) {
 
             mapHolders[adapterPosition] = this
@@ -45,11 +46,11 @@ class TaskListAdapter(
                 isChooseBoxTask.isChecked = todoItem.isCompleted
                 setupDisplayTaskText(this@TaskViewHolder, false, todoItem)
 
-
-                binding.isChooseBoxTask.setOnCheckedChangeListener { _, isChecked ->
+                binding.isChooseBoxTask.setOnClickListener {
+                    val isChecked = binding.isChooseBoxTask.isChecked
                     onChooseClickListener(todoItem.copy(isCompleted = isChecked))
                     setupDisplayTaskText(this@TaskViewHolder, isChecked, todoItem)
-                    Log.d("okhttp.OkHttpClient", "from adapter call update")
+                    Log.d("isChooseBoxTaskTest", isChecked.toString())
                 }
 
                 when (todoItem.importance) {

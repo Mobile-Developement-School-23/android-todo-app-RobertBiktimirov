@@ -1,11 +1,11 @@
 package com.template.task_feature.domain.usecase
 
-import com.template.task_feature.domain.entity.RepositoryResult
+import com.template.common.utli.RepositoryResult
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.repository.TodoItemRepository
 import javax.inject.Inject
 
-class DeleteTodoUseCase @Inject constructor(
+internal class DeleteTodoUseCase @Inject constructor(
     private val repository: TodoItemRepository
 ) {
 

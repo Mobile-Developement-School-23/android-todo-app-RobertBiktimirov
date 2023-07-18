@@ -14,8 +14,6 @@ class RevisionProvider @Inject constructor(
 
     private val edit = sharedPreferences.edit()
 
-    var spRevision: Int = sharedPreferences.getInt(context.getString(R.string.key_sp_revision), 0)
-
     fun updateRevision(newRevision: Int) {
         edit.putInt(context.getString(R.string.key_sp_revision), newRevision).apply()
     }

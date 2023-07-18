@@ -1,11 +1,11 @@
 package com.template.task_feature.domain.repository
 
-import com.template.task_feature.domain.entity.RepositoryResult
+import com.template.common.utli.RepositoryResult
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.task_feature.domain.entity.TodoShell
 import kotlinx.coroutines.flow.Flow
 
-interface TodoItemRepository {
+internal interface TodoItemRepository {
 
     fun getTodoList(): Flow<TodoShell>
 

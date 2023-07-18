@@ -5,7 +5,7 @@ import com.template.task_feature.domain.repository.TodoItemRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetTodoListUseCase @Inject constructor(
+internal class GetTodoListUseCase @Inject constructor(
     private val repository: TodoItemRepository
 ) {
 

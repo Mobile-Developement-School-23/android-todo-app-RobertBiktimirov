@@ -1,10 +1,18 @@
 package com.template.todoapp.di
 
 import android.content.Context
-import com.template.api.services.TodoService
+import androidx.lifecycle.ViewModelProvider
+import com.template.api.services.TaskService
+import com.template.api.services.YandexAccountService
+import com.template.common.theme.ThemeProvider
+import com.template.common.theme.ThemeProviderImpl
 import com.template.database.AppDatabase
+import com.template.setting_feature.di.deps.SettingDeps
+import com.template.sign_up_feature.di.deps.SignDeps
 import com.template.task_feature.di.deps.TaskDeps
 import com.template.todoapp.app.TodoApplication
+import com.template.todoapp.di.modules.AppModule
+import com.template.todoapp.di.modules.ThemeModule
 import com.template.todoapp.ui.main.MainActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -12,13 +20,15 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [AppModule::class]
+    modules = [AppModule::class, ViewModelModule::class, ThemeModule::class]
 )
-interface AppComponent : TaskDeps {
+interface AppComponent : TaskDeps, SettingDeps, SignDeps {
 
     override val database: AppDatabase
-    override val todoService: TodoService
+    override val todoService: TaskService
     override val context: Context
+    override val yandexAccountService: YandexAccountService
+    override val themeProvider: ThemeProvider
 
     fun inject(mainActivity: MainActivity)
     fun inject(application: TodoApplication)

@@ -13,26 +13,14 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-val networkRequest: NetworkRequest = NetworkRequest.Builder()
-    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-    .build()
-
-fun availableNetworkCallback(loadData: (() -> Unit)): ConnectivityManager.NetworkCallback =
-    object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network) {
-            super.onAvailable(network)
-            loadData()
-        }
-    }
-
-
 class NetworkConnectivityObserver(
     context: Context
 ) : ConnectionObserver {
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    override var lastState: ConnectionObserver.Status? = null
 
     override fun observe(): Flow<ConnectionObserver.Status> {
         return callbackFlow {

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/back_primary"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context=".ui.SettingFragment">
+
+
+    <ProgressBar
+        android:id="@+id/loading_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/is_back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:src="@drawable/arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/sign_out_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:src="@drawable/baseline_exit_to_app_24"
+        android:textAllCaps="true"
+        android:textColor="@drawable/bg_save_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/is_back_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/is_back_button" />
+
+
+    <ImageView
+        android:id="@+id/user_avatar"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/ic_launcher_foreground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/user_name"
+        style="@style/collapsedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:textColor="?attr/label_primary"
+        app:layout_constraintStart_toEndOf="@+id/user_avatar"
+        app:layout_constraintTop_toTopOf="@+id/user_avatar"
+        tools:text="Robert Biktimirov" />
+
+
+    <TextView
+        style="@style/settingTextProfile"
+        android:id="@+id/user_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="@id/user_name"
+        app:layout_constraintTop_toBottomOf="@id/user_name"
+        tools:text="Robert2103" />
+
+
+    <TextView
+        style="@style/settingTextProfile"
+        android:id="@+id/user_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:drawablePadding="17dp"
+        app:drawableLeftCompat="@drawable/baseline_phone_24"
+        app:layout_constraintStart_toStartOf="@+id/user_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/user_avatar"
+        tools:text="+7 919 118 404 94" />
+
+    <TextView
+        style="@style/settingTextProfile"
+        android:id="@+id/user_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="17dp"
+        app:drawableLeftCompat="@drawable/baseline_email_24"
+        app:layout_constraintStart_toStartOf="@+id/user_phone"
+        app:layout_constraintTop_toBottomOf="@+id/user_phone"
+        tools:text="bktr253@mail.ru" />
+
+    <TextView
+        android:id="@+id/theme_title"
+        style="@style/collapsedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/all_setting_text_button"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_email" />
+
+    <TextView
+        android:id="@+id/theme_application"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/theme_app_text_button"
+        style="@style/settingTextProfile"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/theme_title"
+        app:layout_constraintTop_toBottomOf="@+id/theme_title" />
+
+
+    <RadioGroup
+        android:id="@+id/theme_application_radio_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/theme_application"
+        app:layout_constraintTop_toBottomOf="@id/theme_application">
+
+        <RadioButton
+            android:id="@+id/light_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_theme_radio_selectori"
+            android:button="@color/purple_700"
+            android:drawableStart="@drawable/ic_baseline_wb_sunny_24"
+            android:drawablePadding="8dp"
+            android:padding="20dp"
+            android:text="@string/radio_group_light"
+            android:textColor="?attr/color_gray_light" />
+
+        <RadioButton
+            android:id="@+id/dark_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/custom_theme_radio_selectori"
+            android:button="@color/purple_700"
+            android:drawableStart="@drawable/ic_baseline_mode_night_24"
+            android:drawablePadding="8dp"
+            android:padding="20dp"
+            android:text="@string/radio_group_dark"
+            android:textColor="?attr/color_gray_light" />
+
+
+        <RadioButton
+            android:id="@+id/system_theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/custom_theme_radio_selectori"
+            android:button="@color/purple_700"
+            android:drawableStart="@drawable/baseline_settings_suggest_24"
+            android:drawablePadding="8dp"
+            android:padding="20dp"
+            android:text="@string/radio_group_system"
+            android:textColor="?attr/color_gray_light" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/time_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/time_notification_text_button"
+        android:textColor="?attr/label_primary"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@id/theme_application"
+        app:layout_constraintTop_toBottomOf="@id/theme_application_radio_group" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

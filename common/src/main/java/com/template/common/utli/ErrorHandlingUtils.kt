@@ -11,12 +11,18 @@ inline fun <R> runCatchingNonCancellation(block: () -> R): Result<R> {
     }
 }
 
-
 sealed interface ApiResult<T : Any>
 
 class ApiSuccess<T : Any>(val data: T) : ApiResult<T>
 class ApiError<T : Any>(val code: Int, val message: String?) : ApiResult<T>
 class ApiException<T : Any>(val e: Throwable) : ApiResult<T>
+
+
+sealed interface RepositoryResult<T : Any>
+
+class RepositorySuccess<T : Any>(val data: T) : RepositoryResult<T>
+class RepositoryError<T : Any>(val code: Int, val message: String?) : RepositoryResult<T>
+class RepositoryException<T : Any>(val e: Throwable) : RepositoryResult<T>
 
 suspend fun <T : Any> handleApi(
     execute: suspend () -> Response<T>

@@ -26,11 +26,31 @@
 
     <string name="name_toke_shared_preference">shared_preference_yandex_token</string>
     <string name="key_sp_token">tokenName</string>
+    <string name="key_sp_jwt_token">JwtTokenName</string>
 
     <string name="name_revision_shared_preference">shared_preference_revision_api</string>
     <string name="key_sp_revision">revision_api</string>
 
+    <string name="key_alarm_manager_intent">intentDataTodoItem</string>
+    <string name="key_alarm_manager_todo_item_key">DataTodoItem</string>
+
+    <string name="name_theme_shared_preference">theme_data_store_name</string>
+    <string name="key_sp_theme">theme_app_key</string>
+    <string name="key_dark_theme_application">dark</string>
+    <string name="key_light_theme_application">light</string>
+    <string name="key_system_theme_application">system</string>
+
+
+    <string name="postpone">Отложить задачу на день</string>
+
     <string name="no_internet_by_save">У вас отсутствует интернет. Изменения могут не сохраниться</string>
+    <string name="all_setting_text_button">Общие настройки</string>
+    <string name="theme_app_text_button">Тема приложения</string>
+    <string name="time_notification_text_button">Время уведомлений</string>
+    <string name="sign_out_text_button">Выйти из аккаунта</string>
 
 
+    <string name="radio_group_dark">Всегда тёмная</string>
+    <string name="radio_group_light">Всегда светлая</string>
+    <string name="radio_group_system">Как в системе</string>
 </resources>

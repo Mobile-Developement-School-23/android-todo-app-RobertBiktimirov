@@ -3,19 +3,26 @@ package com.template.task_feature.ui.task_list_screen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.template.task_feature.domain.entity.*
+import com.template.common.utli.RepositoryError
+import com.template.common.utli.RepositoryException
+import com.template.common.utli.RepositoryResult
+import com.template.common.utli.RepositorySuccess
+import com.template.task_feature.domain.entity.TodoItem
+import com.template.task_feature.domain.entity.TodoShell
 import com.template.task_feature.domain.usecase.DeleteTodoUseCase
 import com.template.task_feature.domain.usecase.GetTodoListUseCase
 import com.template.task_feature.domain.usecase.LoadTodoListInDbUseCase
 import com.template.task_feature.domain.usecase.UpdateTodoListUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TaskListViewModel @Inject constructor(
+internal class TaskListViewModel @Inject constructor(
     getTodoListUseCase: GetTodoListUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase,
     private val updateTodoListUseCase: UpdateTodoListUseCase,
@@ -25,13 +32,16 @@ class TaskListViewModel @Inject constructor(
     private val _noInternet = MutableStateFlow(false)
     val noInternet get() = _noInternet.asStateFlow()
 
+    private val _startAddButtonAnim = MutableStateFlow(true)
+    val startAddButtonAnim = _startAddButtonAnim.asStateFlow()
+
     var isVisibleDone: Boolean = false
         set(value) {
             field = value
             _isVisibleDoneTask.tryEmit(value)
         }
 
-    val todoList = getTodoListUseCase()
+    val todoList: StateFlow<TodoShell> = getTodoListUseCase()
         .stateIn(viewModelScope, SharingStarted.Lazily, TodoShell.toEmpty())
 
     private val _isVisibleDoneTask: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -40,18 +50,35 @@ class TaskListViewModel @Inject constructor(
     private val _emptinessTodoList = MutableStateFlow(false)
     val emptinessTodoList = _emptinessTodoList.asStateFlow()
 
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            firstLoadTodoListUseCase()
+        }
+    }
+
+
+    fun setStateAnim(flag: Boolean){
+        _startAddButtonAnim.tryEmit(flag)
+    }
+
     fun setIsEmptyList(flag: Boolean) {
         _emptinessTodoList.tryEmit(flag)
     }
 
+    fun updateTodoList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            firstLoadTodoListUseCase()
+        }
+    }
+
     fun updateTodo(todoItem: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             handleUpdateOrSaveResult(updateTodoListUseCase(todoItem))
         }
     }
 
     fun deleteTodo(todoItem: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             handleUpdateOrSaveResult(deleteTodoUseCase(todoItem))
         }
     }

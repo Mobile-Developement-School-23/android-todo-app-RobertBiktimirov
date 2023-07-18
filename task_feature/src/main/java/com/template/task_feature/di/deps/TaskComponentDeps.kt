@@ -2,17 +2,16 @@ package com.template.task_feature.di.deps
 
 import android.content.Context
 import androidx.annotation.RestrictTo
-import com.template.api.services.TodoService
+import androidx.lifecycle.ViewModelProvider
+import com.template.api.services.TaskService
 import com.template.database.AppDatabase
-import com.template.task_feature.data.sources.revision.RevisionProvider
 import kotlin.properties.Delegates.notNull
 
 interface TaskDeps {
 
     val database: AppDatabase
-    val todoService: TodoService
+    val todoService: TaskService
     val context: Context
-    val revisionProvider: RevisionProvider
 }
 
 

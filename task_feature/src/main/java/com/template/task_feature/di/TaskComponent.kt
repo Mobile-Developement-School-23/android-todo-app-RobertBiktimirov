@@ -1,6 +1,7 @@
 package com.template.task_feature.di
 
 import androidx.lifecycle.ViewModel
+import com.template.task_feature.data.setup_notification.AlarmReceiver
 import com.template.task_feature.di.deps.TaskDeps
 import com.template.task_feature.di.deps.TaskDepsProvider
 import com.template.task_feature.di.modules.TaskModule
@@ -16,7 +17,7 @@ internal interface TaskComponent {
 
     fun inject(taskListFragment: TaskListFragment)
     fun inject(taskFragment: TaskFragment)
-
+    fun inject(receiver: AlarmReceiver)
     @Component.Builder
     interface Builder {
         fun deps(taskDeps: TaskDeps): Builder
@@ -27,6 +28,7 @@ internal interface TaskComponent {
 
 @Scope
 annotation class TaskScope
+
 
 internal class TaskComponentViewModel : ViewModel() {
 

@@ -4,17 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.template.database.converter.ImportanceConverter
 import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
+import com.template.database.dao.YandexAccountDao
 import com.template.database.entity.RequestDto
 import com.template.database.entity.TodoItemEntity
+import com.template.database.entity.YandexAccountDto
 
-@Database(entities = [TodoItemEntity::class, RequestDto::class], version = 2, exportSchema = false)
-abstract class AppDatabase: RoomDatabase() {
+@Database(
+    entities = [TodoItemEntity::class, RequestDto::class, YandexAccountDto::class],
+    version = 3,
+    exportSchema = false
+)
+abstract class AppDatabase : RoomDatabase() {
     abstract fun todoDao(): TodoDao
     abstract fun requestDao(): RequestDao
+    abstract fun yandexAccountDao(): YandexAccountDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null

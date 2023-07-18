@@ -38,6 +38,4 @@ class TodoItemConverter {
         val todoItem = object : TypeToken<TodoItemEntity>() {}
         return gson.fromJson(json, todoItem)
     }
-
-
 }

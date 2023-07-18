@@ -8,8 +8,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TodoDao {
 
+    @Query("select * from todoItem ")
+    fun getTodoItemsFlow(): Flow<List<TodoItemEntity>>
+
     @Query("select * from todoItem")
-    fun getTodoItems(): Flow<List<TodoItemEntity>>
+    suspend fun getTodoItems(): List<TodoItemEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveTodoItem(todoItemEntity: TodoItemEntity)

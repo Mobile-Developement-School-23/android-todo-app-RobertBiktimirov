@@ -2,10 +2,16 @@ package com.template.todoapp.app
 
 import android.app.Application
 import android.content.Context
-import com.template.api.ApiTokenProvider
+import androidx.work.Configuration
+import androidx.work.WorkManager
+import com.template.setting_feature.di.deps.SettingDepsStore
+import com.template.sign_up_feature.di.deps.SignDepsProvider
+import com.template.sign_up_feature.di.deps.SignDepsStore
 import com.template.task_feature.di.deps.TaskDepsStore
 import com.template.todoapp.di.AppComponent
 import com.template.todoapp.di.DaggerAppComponent
+import com.template.todoapp.ui.services.factory.CreateWorkerFactory
+import javax.inject.Inject
 
 class TodoApplication : Application() {
 
@@ -15,6 +21,15 @@ class TodoApplication : Application() {
             "AppComponent must be not null"
         }
 
+    @Inject
+    lateinit var createWorkerFactory: CreateWorkerFactory
+
+    private val configurationWorker by lazy {
+        Configuration.Builder()
+            .setWorkerFactory(createWorkerFactory)
+            .build()
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -22,9 +37,14 @@ class TodoApplication : Application() {
             .context(this)
             .build()
 
+        appComponent.inject(this)
+
 
         TaskDepsStore.deps = appComponent
+        SettingDepsStore.deps = appComponent
+        SignDepsStore.deps = appComponent
 
+        WorkManager.initialize(this, configurationWorker)
     }
 
 }

@@ -1,12 +1,8 @@
 package com.template.task_feature.domain.entity
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-
-sealed interface RepositoryResult<T : Any>
-
-class RepositorySuccess<T : Any>(val data: T) : RepositoryResult<T>
-class RepositoryError<T : Any>(val code: Int, val message: String?) : RepositoryResult<T>
-class RepositoryException<T : Any>(val e: Throwable) : RepositoryResult<T>
 
 enum class Importance {
     LOW,
@@ -14,6 +10,7 @@ enum class Importance {
     URGENT
 }
 
+@Parcelize
 data class TodoItem(
     val id: String,
     val text: String,
@@ -23,7 +20,7 @@ data class TodoItem(
     var color: String? = null,
     val dateOfCreating: Long,
     var dateOfEditing: Long? = null
-)
+): Parcelable
 
 data class TodoShell(
     val isCache: Boolean,
