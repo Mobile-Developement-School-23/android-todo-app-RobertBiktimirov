@@ -12,12 +12,17 @@ import com.template.api.entity.TodoResponse
 import com.template.api.services.TaskService
 import com.template.common.theme.ThemeEnumCommon
 import com.template.common.theme.ThemeProvider
-import com.template.common.utli.*
+import com.template.common.utli.ApiError
+import com.template.common.utli.ApiException
+import com.template.common.utli.ApiSuccess
+import com.template.common.utli.handleApi
 import com.template.database.dao.RequestDao
 import com.template.database.dao.TodoDao
 import com.template.database.entity.TodoItemEntity
 import com.template.database.entity.ViewRequest
-import com.template.task_feature.data.mappers.*
+import com.template.task_feature.data.mappers.toDto
+import com.template.task_feature.data.mappers.toImportance
+import com.template.task_feature.data.mappers.toUi
 import com.template.task_feature.domain.entity.Importance
 import com.template.task_feature.domain.entity.TodoItem
 import com.template.todoapp.domain.entity.ThemeEnum
@@ -26,12 +31,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
+import javax.inject.Provider
 import com.template.resourses_module.R as resR
 
 class MainRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao,
     private val requestDao: RequestDao,
-    private val todoService: TaskService,
+    private val todoService: Provider<TaskService>,
     private val context: Context,
     private val themeProvider: ThemeProvider
 ) : MainRepository {
@@ -50,7 +56,7 @@ class MainRepositoryImpl @Inject constructor(
 
     suspend fun loadDataInDb() {
 
-        val apiResponse = todoService.getTodoList()
+        val apiResponse = todoService.get().getTodoList()
         val body = apiResponse.body()
         if (body != null && body.status == "ok") {
             todoDao.deleteAll()
@@ -61,7 +67,7 @@ class MainRepositoryImpl @Inject constructor(
 
     suspend fun loadNewDataFromDb() {
         val requests = requestDao.getRequest()
-        val response = todoService.getTodoList().body()
+        val response = todoService.get().getTodoList().body()
         var revision = response?.revision
             ?: revisionSharedPreferences.getInt(context.getString(resR.string.key_sp_revision), 0)
 
@@ -72,7 +78,7 @@ class MainRepositoryImpl @Inject constructor(
                 when (request.view) {
                     ViewRequest.UPDATE -> {
                         revision = loadItemRequest {
-                            todoService.editTodoItem(
+                            todoService.get().editTodoItem(
                                 request.todoItemEntity.id,
                                 request.todoItemEntity.toUi().toBody(),
                                 revision
@@ -82,13 +88,13 @@ class MainRepositoryImpl @Inject constructor(
 
                     ViewRequest.DELETE -> {
                         revision = loadItemRequest {
-                            todoService.deleteTodoItem(request.todoItemEntity.id, revision)
+                            todoService.get().deleteTodoItem(request.todoItemEntity.id, revision)
                         } ?: revision
                     }
 
                     ViewRequest.SAVE -> {
                         revision = loadItemRequest {
-                            todoService.saveTodoItem(
+                            todoService.get().saveTodoItem(
                                 request.todoItemEntity.toUi().toBody(),
                                 revision
                             )

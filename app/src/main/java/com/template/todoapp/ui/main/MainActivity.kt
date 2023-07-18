@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationApp {
         }
 
         connectivityObserver()
+        themeObserver()
 
     }
 
